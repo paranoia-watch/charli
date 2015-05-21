@@ -1,0 +1,21 @@
+{
+  "name": "fear-index",
+  "version": "1.0.0",
+  "description": "How afraid are we?",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bvhme@github.com/bvhme/fear-index.git"
+  },
+  "author": "Boris van Hoytema",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bvhme/fear-index/issues"
+  },
+  "dependencies": {
+    "express": "^4.12.4"
+  }
+}
