@@ -5,5 +5,5 @@ socket.on('info', function (data) {
 })
 
 socket.on('update', function (data) {
-	document.getElementById("section").innerHTML = data;
+	document.getElementById("index").innerHTML = data;
 })
