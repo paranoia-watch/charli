@@ -17,6 +17,7 @@
     "url": "https://github.com/bvhme/fear-index/issues"
   },
   "dependencies": {
-    "express": "^4.12.4"
+    "express": "^4.12.4",
+    "twit": "^1.1.20"
   }
 }
