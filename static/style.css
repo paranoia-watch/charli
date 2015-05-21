@@ -2,6 +2,7 @@ body {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	background-color: black;
 	color: white;
+	text-align: center;
 }
 header {
 	font-size: 2em;
