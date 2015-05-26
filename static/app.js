@@ -5,7 +5,7 @@ socket.on('info', function (data) {
 })
 
 socket.on('update', function (data) {
-	document.getElementById("index").innerHTML = data.index;
+	document.getElementById("index").innerHTML = data.index + '&deg;';
 })
 
 $('body').bigtext();
