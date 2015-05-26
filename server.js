@@ -35,6 +35,11 @@ server.listen(
 				root: './static'
 			});
 		})
+		app.get('/animateNumber.jquery.js', function (req, res) {
+			res.sendFile('animateNumber.jquery.js', {
+				root: './static'
+			});
+		})
 
 		app.get('/', function (req, res) {
 			res.set('Content-Type', 'text/html')
@@ -47,13 +52,16 @@ server.listen(
 			+		'<script src="/socket.io/socket.io.js"></script>'
 			+	'</head>'
 			+	'<body>'
-			+		'<header>Charli</header>'
-			+		'<section id="index">'
-			+			createIndex.calculateIndex()
-			+		'&deg;</section>'
-			+		'<footer>Substantieel</footer> '
+			+		'<div id="bigtext">'
+			+			'<header>Charli</header>'
+			+			'<section><span id="index">'
+			+				createIndex.calculateIndex()
+			+			'</span><span id="degrees">&deg;</span></section>'
+			+			'<footer>Substantieel</footer> '
+			+		'</div>'
 			+		'<script src="jquery.js"></script>'
 			+		'<script src="bigtext.jquery.js"></script>'
+			+		'<script src="animateNumber.jquery.js"></script>'
 			+		'<script src="app.js" charset="utf-8"></script>'
 			+	'</body>'
 			+	'</html>'
