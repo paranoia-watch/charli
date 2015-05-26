@@ -14,9 +14,10 @@ body {
 }
 #display {
 	font-size: 20vw;
+}
+#index {
 	font-weight: 500;
 }
-#footer {
-	font-size: 6vw;
-	font-weight: 100;
+#degrees {
+	font-weight: 200;
 }

@@ -53,11 +53,10 @@ server.listen(
 			+	'</head>'
 			+	'<body>'
 			+		'<div id="bigtext">'
-			+			'<div id="header">Charli</div>'
 			+			'<div id="display"><span id="index">'
 			+				createIndex.calculateIndex()
 			+			'</span><span id="degrees">&deg;</span></div>'
-			+			'<div id="footer">Substantieel</div> '
+			+			'<div id="header">Charli</div>'
 			+		'</div>'
 			+		'<script src="jquery.js"></script>'
 			+		'<script src="bigtext.jquery.js"></script>'
