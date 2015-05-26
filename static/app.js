@@ -7,3 +7,5 @@ socket.on('info', function (data) {
 socket.on('update', function (data) {
 	document.getElementById("index").innerHTML = data.index;
 })
+
+$('body').bigtext();
