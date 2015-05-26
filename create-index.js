@@ -40,7 +40,6 @@ var createIndex = {
 	initialise: function () {
 		try {
 			var readCacheFile = require('./.cache.json')
-			console.log(readCacheFile)
 			createIndex.cache = readCacheFile
 			readCacheFile = undefined
 			}
