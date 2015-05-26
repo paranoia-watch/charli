@@ -8,14 +8,15 @@ body {
 	font-size: 2em;
 	padding: 5vw;
 }
-header {
-	font-size: 6em;
+#header {
+	font-size: 10vw;
 	font-weight: 100;
 }
-section {
-	font-size: 1em;
+#display {
+	font-size: 20vw;
 	font-weight: 500;
 }
-footer {
+#footer {
+	font-size: 6vw;
 	font-weight: 100;
 }
