@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 var createIndex = {
 	addTweet: function(tweet) {
 		var cacheTweet = {
@@ -6,10 +8,11 @@ var createIndex = {
 			weight: createIndex.calculateWeight(tweet)
 		}
 
+		createIndex.saveCache()
 		return createIndex.cache.push(cacheTweet)
 	},
 	calculateWeight: function (tweet) {
-		weight = parseInt(1)
+		weight = parseFloat(tweet.user.followers_count) / 1000
 		return weight
 	},
 	calculateIndex: function () {
@@ -24,8 +27,28 @@ var createIndex = {
 			index = index + record.weight
 		}
 
-		return index
+		return parseFloat(index).toFixed(2)
 	},
-	cache: []
+	saveCache: function () {
+		fs.writeFile("./.cache.json", JSON.stringify(createIndex.cache), function(err) {
+		    if(err) {
+		        return console.log(err);
+		    }
+		    return console.log("Saved Cache");
+		});
+	},
+	initialise: function () {
+		try {
+			var readCacheFile = require('./.cache.json')
+			console.log(readCacheFile)
+			createIndex.cache = readCacheFile
+			readCacheFile = undefined
+			}
+		catch( error ) { return console.log('Cache not loaded', error) }
+		return console.log('cache loaded')
+	},
+	cache: [],
+	index: 0
 }
+
 module.exports = createIndex
