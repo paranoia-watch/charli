@@ -15,11 +15,6 @@ server.listen(
 	function () {
 		console.log('The fear index is running on port ' + port)
 
-		app.get('/', function (req, res) {
-			res.sendFile('index.html', {
-				root: './static'
-			});
-		})
 		app.get('/style.css', function (req, res) {
 			res.sendFile('style.css', {
 				root: './static'
@@ -30,20 +25,45 @@ server.listen(
 				root: './static'
 			});
 		})
+		app.get('/jquery.js', function (req, res) {
+			res.sendFile('jquery.js', {
+				root: './static'
+			});
+		})
+		app.get('/bigtext.jquery.js', function (req, res) {
+			res.sendFile('bigtext.jquery.js', {
+				root: './static'
+			});
+		})
 
-		app.get('/web', function (req, res) {
+		app.get('/', function (req, res) {
 			res.set('Content-Type', 'text/html')
-			res.send('Het <a href="https://www.nctv.nl/onderwerpen/tb/dtn/actueeldreigingsniveau/">NCTB Actueel Dreigingsbeeld Terrorisme Nederland</a> is: "Substantieel". De index staat op ' + createIndex.calculateIndex())
+			res.send('<!DOCTYPE html>'
+			+	'<html lang="en">'
+			+	'<head>'
+			+		'<meta charset="UTF-8">'
+			+		'<title>Charli</title>'
+			+		'<link rel="stylesheet" href="style.css">'
+			+		'<script src="/socket.io/socket.io.js"></script>'
+			+	'</head>'
+			+	'<body>'
+			+		'<header>Charli</header>'
+			+		'<section id="index">'
+			+			createIndex.calculateIndex()
+			+		'&deg;</section>'
+			+		'<footer>Substantieel</footer> '
+			+		'<script src="jquery.js"></script>'
+			+		'<script src="bigtext.jquery.js"></script>'
+			+		'<script src="app.js" charset="utf-8"></script>'
+			+	'</body>'
+			+	'</html>'
+				)
 		})
 
 		app.get('/api', function (req, res) {
 			res.set('Content-Type', 'application/json')
 			res.send({
-				"NCTB DTN": {
-					"Source": "https://www.nctv.nl/onderwerpen/tb/dtn/actueeldreigingsniveau/",
-					"Level": "Substantieel"
-				},
-				"Index": createIndex.calculateIndex()
+				"charli": createIndex.calculateIndex()
 			})
 		})
 	})
