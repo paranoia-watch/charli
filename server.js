@@ -56,7 +56,7 @@ server.listen(
 			+			'<div id="display"><span id="index">'
 			+				createIndex.calculateIndex()
 			+			'</span><span id="degrees">&deg;</span></div>'
-			+			'<div id="header">Charli</div>'
+			+			'<div id="header">paranoia.watch</div>'
 			+		'</div>'
 			+		'<script src="jquery.js"></script>'
 			+		'<script src="bigtext.jquery.js"></script>'

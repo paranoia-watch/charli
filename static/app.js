@@ -1,3 +1,14 @@
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+                                                $(window).scrollTop()) + "px");
+    return this;
+}
+var repositionAndScale = function () {
+	$('#bigtext').bigtext().center()
+}
+
+
 var index = parseFloat(document.getElementById("index").innerHTML)
 var socket = io()
 
@@ -23,11 +34,10 @@ socket.on('update', function (data) {
 				var target = $(tween.elem)
 
 				target.text(floored_number)
-				$('#bigtext').bigtext()
+				repositionAndScale()
 			}
 		},
 		1000
 	)
 })
 
-$('#bigtext').bigtext()
