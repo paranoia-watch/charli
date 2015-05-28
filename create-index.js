@@ -53,7 +53,7 @@ var createIndex = {
 			index = index + record.weight
 		}
 
-		return parseFloat(index)
+		return createIndex.index = parseFloat(index)
 	},
 	initialise: function () {
 		var cutoff = new Date();
