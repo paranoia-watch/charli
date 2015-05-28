@@ -43,34 +43,13 @@ server.listen(
 
 		app.get('/', function (req, res) {
 			res.set('Content-Type', 'text/html')
-			res.send('<!DOCTYPE html>'
-			+	'<html lang="en">'
-			+	'<head>'
-			+		'<meta charset="UTF-8">'
-			+		'<title>Charli</title>'
-			+		'<link rel="stylesheet" href="style.css">'
-			+		'<script src="/socket.io/socket.io.js"></script>'
-			+	'</head>'
-			+	'<body>'
-			+		'<div id="bigtext">'
-			+			'<div id="display"><span id="index">'
-			+				createIndex.calculateIndex()
-			+			'</span><span id="degrees">&deg;</span></div>'
-			+			'<div id="header">paranoia.watch</div>'
-			+		'</div>'
-			+		'<script src="jquery.js"></script>'
-			+		'<script src="bigtext.jquery.js"></script>'
-			+		'<script src="animateNumber.jquery.js"></script>'
-			+		'<script src="app.js" charset="utf-8"></script>'
-			+	'</body>'
-			+	'</html>'
-				)
+			res.send('<!DOCTYPE html>' + '<html lang="en">' + '<head>' + '<meta charset="UTF-8">' + '<title>Charli</title>' + '<link rel="stylesheet" href="style.css">' + '<script src="/socket.io/socket.io.js"></script>' + '</head>' + '<body>' + '<div id="bigtext">' + '<div id="display"><span id="index">' + createIndex.getIndex() + '</span><span id="degrees">&deg;</span></div>' + '<div id="header">paranoia.watch</div>' + '</div>' + '<script src="jquery.js"></script>' + '<script src="bigtext.jquery.js"></script>' + '<script src="animateNumber.jquery.js"></script>' + '<script src="app.js" charset="utf-8"></script>' + '</body>' + '</html>')
 		})
 
 		app.get('/api', function (req, res) {
 			res.set('Content-Type', 'application/json')
 			res.send({
-				"charli": createIndex.calculateIndex()
+				"charli": createIndex.index
 			})
 		})
 	})
@@ -114,9 +93,7 @@ var createIndex = require('./create-index.js')
 createIndex.initialise()
 
 stream.on('tweet', function (tweet) {
-	console.log("Tweet: ", tweet.id)
 	createIndex.addTweet(tweet)
-	console.log("Index is at: ", createIndex.calculateIndex())
 })
 
 // Start Socket.io Server
@@ -126,14 +103,14 @@ console.log('Start the Socket.io server ')
 io.sockets.on('connection', function (socket) {
 	stream.on('tweet', function (tweet) {
 		socket.emit('update', {
-			'index': createIndex.calculateIndex()
+			'index': createIndex.getIndex()
 		})
 	})
 	stream.on('connected', function (request) {
-        if(request.statusMessage !== "OK") {
-    		socket.emit('info', {
-    			'info': request.statusMessage
-    		})
-        }
+		if (request.statusMessage !== "OK") {
+			socket.emit('info', {
+				'info': request.statusMessage
+			})
+		}
 	})
 })
