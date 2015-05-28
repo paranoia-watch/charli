@@ -43,7 +43,7 @@ server.listen(
 
 		app.get('/', function (req, res) {
 			res.set('Content-Type', 'text/html')
-			res.send('<!DOCTYPE html>' + '<html lang="en">' + '<head>' + '<meta charset="UTF-8">' + '<title>Charli</title>' + '<link rel="stylesheet" href="style.css">' + '<script src="/socket.io/socket.io.js"></script>' + '</head>' + '<body>' + '<div id="bigtext">' + '<div id="display"><span id="index">' + createIndex.getIndex() + '</span><span id="degrees">&deg;</span></div>' + '<div id="header">paranoia.watch</div>' + '</div>' + '<script src="jquery.js"></script>' + '<script src="bigtext.jquery.js"></script>' + '<script src="animateNumber.jquery.js"></script>' + '<script src="app.js" charset="utf-8"></script>' + '</body>' + '</html>')
+			res.send('<!DOCTYPE html>' + '<html lang="en">' + '<head>' + '<meta charset="UTF-8">' + '<title>paranoia.watch</title>' + '<link rel="stylesheet" href="style.css">' + '<script src="/socket.io/socket.io.js"></script>' + '</head>' + '<body>' + '<div id="bigtext">' + '<div id="display"><span id="index">' + createIndex.getIndex() + '</span><span id="degrees">&deg;</span></div>' + '<div id="header">paranoia.watch</div>' + '</div>' + '<script src="jquery.js"></script>' + '<script src="bigtext.jquery.js"></script>' + '<script src="animateNumber.jquery.js"></script>' + '<script src="app.js" charset="utf-8"></script>' + '</body>' + '</html>')
 		})
 
 		app.get('/api', function (req, res) {
