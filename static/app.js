@@ -41,3 +41,4 @@ socket.on('update', function (data) {
 	)
 })
 
+repositionAndScale()
