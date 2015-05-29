@@ -1,6 +1,7 @@
 var settings = require('./settings.json')
 
-var fs = require('fs');
+var fs = require('fs')
+var events = require("events")
 
 // Start the database
 var mongoose = require("mongoose")
@@ -8,69 +9,89 @@ var dbUri = process.env.MONGOLAB_URI || 'mongodb://heroku_app37075198:mijtsru4mj
 
 mongoose.connect(dbUri, function (err, res) {
 	if (err) {
-		console.log('ERROR connecting to: ' + dbUri + '. ' + err);
+		console.log('ERROR connecting to: ' + dbUri + '. ' + err)
 	} else {
-		console.log('Succeeded connected to: ' + dbUri);
+		console.log('Succeeded connected to: ' + dbUri)
 	}
-});
+})
 
 var indexSchema = new mongoose.Schema({
 	trigger: String,
 	triggerId: String,
-	index: Number,
+	theIndex: Number,
 	weight: Number,
 	date: Date,
-});
+})
 
-var Index = mongoose.model('Index', indexSchema);
+var Index = mongoose.model('Index', indexSchema)
 
-var createIndex = {
-	addTweet: function(tweet) {
-		var index = createIndex.calculateIndex() + parseFloat(tweet.user.followers_count)
+var degrees = new events.EventEmitter
 
-		var record = new Index ({
-			trigger: "tweet",
-			triggerId: tweet.id,
-			date: new Date(tweet.created_at),
-			weight: parseFloat(tweet.user.followers_count),
-			index: index
-		})
+degrees.addTweet = function (tweet) {
+	var record = new Index({
+		trigger: "tweet",
+		triggerId: tweet.id,
+		date: new Date(tweet.created_at),
+		weight: parseFloat(tweet.user.followers_count),
+		theIndex: degrees.theIndex
+	})
 
-		record.save(function (err) {if (err) console.log ('Error on save!', record)});
-		createIndex.cache.push(record)
+	record.save(function (err) {
+		if (err) console.log('Error on save!', record)
+		degrees.calculateIndexFromDatabase()
+	})
 
-		console.log("Tweet: ", record, "Index is at: ", createIndex.getIndex(), " The cache length is:", createIndex.cache.length)
-	},
-	calculateIndex: function () {
-		var index = 0
-		var cutOff = new Date() - settings.indexTimeSpan
-
-		for (var i = 0; i < createIndex.cache.length; i++) {
-			var record = createIndex.cache[i]
-			if (record.date < cutOff || record.date.$date < cutOff) {
-				createIndex.cache.splice(i, 1)
-			}
-			index = index + record.weight
-		}
-
-		return createIndex.index = parseFloat(index)
-	},
-	initialise: function () {
-		var cutoff = new Date();
-		cutoff.setDate(cutoff.getDate()-settings.indexTimeSpan);
-		Index.find({date: {$gte: cutoff}}, function (err, docs) {
-			if(err) {console.log(err)}
-			createIndex.cache = docs
-			console.log('the loaded cache length is: ', docs.length)
-			createIndex.index = createIndex.calculateIndex()
-			return console.log('the index is at: ', createIndex.getIndex())
-		 });
-	},
-	cache: [],
-	index: 0,
-	getIndex: function () {
-		return parseFloat(createIndex.index / 1000).toFixed(2)
-	}
+	console.log("Tweet: ", record, "Index is at: ", degrees.getIndex())
 }
 
-module.exports = createIndex
+degrees.calculateIndexFromDatabase = function (accountId) {
+	var cutOff = new degrees.cutOff()
+	return Index.aggregate([{
+		$match: {
+			date: {
+				$gte: cutOff
+			}
+		}
+	}, {
+		$group: {
+			_id: "$trigger",
+			amount: {
+				$sum: 1
+			},
+			weight: {
+				$sum: "$weight"
+			},
+			average: {
+				$avg: "$weight"
+			}
+		}
+	}], function (err, result) {
+		if (err) {
+			console.log(err)
+			return
+		}
+		console.log(result)
+		degrees.setIndex(result[0].weight)
+	})
+}
+
+degrees.cutOff = function () {
+	return new Date(Date.now() - 60 * 60 * 1000)
+}
+
+degrees.initialise = function () {
+	degrees.calculateIndexFromDatabase()
+}
+
+degrees.theIndex = 0
+
+degrees.getIndex = function () {
+	return degrees.theIndex
+}
+
+degrees.setIndex = function (number) {
+	degrees.theIndex = parseFloat( (number / 1000) - 50).toFixed(2)
+	degrees.emit("changed", degrees.getIndex())
+}
+
+module.exports = degrees
