@@ -5,13 +5,13 @@ var events = require("events")
 
 // Start the database
 var mongoose = require("mongoose")
-var dbUri = process.env.MONGOLAB_URI || 'mongodb://heroku_app37075198:mijtsru4mj43tlsl7hsmk0ij1l@ds037252.mongolab.com:37252/heroku_app37075198'
+var dbUri = process.env.MONGOLAB_URI
 
 mongoose.connect(dbUri, function (err, res) {
 	if (err) {
 		console.log('ERROR connecting to: ' + dbUri + '. ' + err)
 	} else {
-		console.log('Succeeded connected to: ' + dbUri)
+		console.log('Successfully connected to the Database')
 	}
 })
 
@@ -37,7 +37,7 @@ degrees.addTweet = function (tweet) {
 	})
 
 	record.save(function (err) {
-		if (err) console.log('Error on save!', record)
+		if (err) console.log('Error on save!', err, record)
 		degrees.calculateIndexFromDatabase()
 	})
 
@@ -66,8 +66,8 @@ degrees.calculateIndexFromDatabase = function (accountId) {
 			}
 		}
 	}], function (err, result) {
-		if (err) {
-			console.log(err)
+		if (err || !result[0]) {
+			console.log('ERROR calculateIndexFromDatabase', err, result)
 			return
 		}
 		console.log(result)
