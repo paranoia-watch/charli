@@ -1,14 +1,23 @@
-var settings = require('./settings.js')
 var events = require('events')
 
-var CreateIndex = function (db) {
-  if (settings.index.disabled) {
-    return console.info('Creation of the index is disabled in the settings')
+var CreateIndex = function (settings, db) {
+  if (settings.disabled) {
+    console.info('Creation of the index is disabled in the settings')
+    return false
   }
-  
+  if (!settings.timeSpanToCalculateOver) {
+    console.info('There is no timeSpanToCalculateOver specified')
+    return false
+  }
+
+  var cutOff = function () {
+    return new Date(Date.now() - settings.timeSpanToCalculateOver)
+  }
+
   var createIndex = new events.EventEmitter()
 
   createIndex.addTweet = function (tweet) {
+    if (!db) return createIndex.emit('add-tweet-error', 'No DB connected')
     var record = new db.Index({
       trigger: 'tweet',
       triggerId: tweet.id,
@@ -17,11 +26,12 @@ var CreateIndex = function (db) {
       theIndex: createIndex.theIndex
     })
 
-    record.save(function (err) {
-      if(!settings.db.writeEnabled) {
-        if (err) console.error('Error on save!', err, record)
-        createIndex.calculateIndexFromDatabase()
-        return createIndex.emit('add-tweet-error', err)
+    record.save(function (error) {
+      if (!db.settings.writeEnabled) {
+        if (error) {
+          return createIndex.emit('add-tweet-error', err)
+        }
+        return createIndex.calculateIndexFromDatabase()
       }
       return createIndex.emit('add-tweet-error', 'DB Write disabled')
     })
@@ -30,6 +40,7 @@ var CreateIndex = function (db) {
 
   createIndex.calculateIndexFromDatabase = function (accountId) {
     var thisCutOff = new cutOff()
+    if(!db) return createIndex.emit('calculate-index-from-database-error', 'No DB connected')
     return db.Index.aggregate([{
       $match: {
         date: {
@@ -57,10 +68,6 @@ var CreateIndex = function (db) {
       createIndex.emit('index-calculated-from-database', result)
       createIndex.setIndex(result[0].weight)
     })
-  }
-
-  cutOff = function () {
-    return new Date(Date.now() - settings.index.timeSpanToCalculateOver)
   }
 
   createIndex.getIndex = function () {

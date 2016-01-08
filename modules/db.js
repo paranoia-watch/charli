@@ -1,15 +1,19 @@
-var settings = require('./settings.js')
-
 var mongoose = require('mongoose')
 var events = require('events')
 
-var Db = function () {
-  // if (settings.db.disabled) {
-  //   return console.info('The database is disabled in the settings')
-  // }
+var Db = function (settings) {
+  if (settings.disabled) {
+    console.info('The database is disabled in the settings')
+    return false
+  }
+  if (!settings.uri) {
+    console.error('No database URI specified')
+    return false
+  }
   var db = new events.EventEmitter()
+  db.settings = settings
   
-  mongoose.connect(settings.db.uri, function (err, res) {
+  mongoose.connect(settings.uri, function (err, res) {
     if (err) {
       db.emit('connection-error', err, res)
     } else {

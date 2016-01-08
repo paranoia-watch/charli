@@ -13,19 +13,19 @@ settings.db = {
 }
 
 // Streams
-settings.twitter = {
-    consumerKey: process.env.TWITTERCONSUMERKEY,
-    consumerSecret: process.env.TWITTERCONSUMERSECRET,
-    accessToken: process.env.TWITTERACCESSTOKEN,
-    accessSecret: process.env.TWITTERACCESSSECRET,
-    track: process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json'),
-    disabled: process.env.TWITTERDISABLED || false
-  }
+settings.twitterTracker = {
+  consumerKey: process.env.TWITTERCONSUMERKEY,
+  consumerSecret: process.env.TWITTERCONSUMERSECRET,
+  accessToken: process.env.TWITTERACCESSTOKEN,
+  accessSecret: process.env.TWITTERACCESSSECRET,
+  track: process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json'),
+  disabled: process.env.TWITTERDISABLED || false
+}
 
 // Index
-settings.index = {
+settings.createIndex = {
   disabled: process.env.INDEXDISABLED || false,
-  timeSpanToCalculateOver: process.env.INDEXTIMESPAN || 1*60*60*10,
+  timeSpanToCalculateOver: process.env.INDEXTIMESPAN || 1 * 60 * 60 * 10,
 }
 
 module.exports = settings

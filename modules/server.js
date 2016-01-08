@@ -1,5 +1,4 @@
 // Import settings
-var settings = require('./settings.js')
 
 var http = require('http')
 var express = require('express')
@@ -9,14 +8,16 @@ var events = require('events')
 
 var twitterTracker = require('./twitter-tracker.js')
 
-var Server = function () {
-  if (settings.server.disabled) {
+var Server = function (settings) {
+  // TODO Make everything private
+  
+  if (settings.disabled) {
     return console.info('The server has been disabled in the settings.')
   }
   var server = new events.EventEmitter()
 
   server.httpListen = function () {
-    console.info('The fear index is listening on port ' + settings.server.port)
+    console.info('The fear index is listening on port ' + settings.port)
 
     server.app.get('/style.css', function (req, res) {
       res.sendFile('style.css', {
@@ -52,7 +53,7 @@ var Server = function () {
     server.app.get('/api', function (req, res) {
       res.set('Content-Type', 'application/json')
       res.send({
-        'charli': degrees.getIndex()
+        'charli': server._index
       })
     })
 
@@ -66,16 +67,7 @@ var Server = function () {
           'index': number
         })
       })
-      server.on('broadcast-info', function (message) {
-        socket.emit('info', {
-          'info': message
-        })
-      })
     })
-  }
-  
-  server.broadcast = function(type, message) {
-    server.emit(type, message)
   }
 
   // Start a server
@@ -84,7 +76,7 @@ var Server = function () {
   server.ioServer = socketio(server.httpServer)
 
   server.httpServer.listen(
-    settings.server.port,
+    settings.port,
     server.httpListen
   )
   server.ioListen()
