@@ -1,6 +1,6 @@
 /*
  * @package charli
- * @subpackage peilingwijzer-parser
+ * @subpackage peilingwijzer
  * @copyright Copyright(c) 2016 Paranoia Watch
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  */
