@@ -12,27 +12,17 @@ Charli receives a subset of tweets with the words "terreur", "terrorisme" and "a
 
 URL: `http://localhost:8080/`
 
-A simple web app that tells you the current Threat level in The Netherlands.
+A simple web app that tells you the current threat level in The Netherlands.
 
 ## API
 
 URL: `http://localhost:8080/api`
 
-API telling you the Threat level in the Netherlands
+API telling you the threat level in the Netherlands.
 
 # Install & Run
 
-Create a file called `twitter-login-token.js` with the following content and your own keys
-
-```json
-{
-	"consumer_key": "",
-	"consumer_secret": "",
-	"access_token": "",
-	"access_token_secret": ""
-}
-
-```
+Rename `twitter-login-token.example.json` to `twitter-login-token.json` and make sure you fill the consumer_key, consumer_secret, access_token and access_token_secret. Visit and create an app on `https://apps.twitter.com/` to obtain the required credentials.
 
 Set environment variable MONGOLAB_URI!
 
