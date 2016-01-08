@@ -32,9 +32,12 @@ var TwitterTracker = function () {
 
   var twitterTracker = new events.EventEmitter()
 
-  console.log('Start the Twitter stream and track ', settings.twitter.track)
+  console.log('Start the Twitter stream and track', settings.twitter.track.nld)
   stream = Twitter.stream('statuses/filter', {
     track: settings.twitter.track.nld
+  })
+  stream.on('tweet', function (tweet) {
+    twitterTracker.emit('tweet', tweet)
   })
   stream.on('limit', function (message) {
     twitterTracker.emit('limit', message)
@@ -43,10 +46,13 @@ var TwitterTracker = function () {
     twitterTracker.emit('disconnect', message)
   })
   stream.on('connect', function (request) {
-    twitterTracker.emit('connect', request)
+    twitterTracker.emit('connect', request.statusMessage)
   })
   stream.on('connected', function (request) {
-    twitterTracker.emit('connected', request)
+    if (request.statusMessage !== 'OK') {
+      return twitterTracker.emit('connection-error', request.statusMessage)
+    }
+    twitterTracker.emit('connected', request.statusMessage)
   })
   stream.on('reconnect', function (request, response, connectInterval) {
     twitterTracker.emit('reconnect', request, response, connectInterval)

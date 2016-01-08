@@ -12,7 +12,7 @@ twitterTracker.on('tweet', function (tweet) {
 
 createIndex.on('index-changed', function (newIndex) {
   console.log('The index is changed to: ', newIndex)
-  server.changeIndex(newIndex)
+  server.emit('broadcast-index', newIndex)
 })
 
 // Logging the current status
@@ -21,27 +21,29 @@ db.on('connection-error', function(err, res) {
 })
 
 twitterTracker.on('limit', function(message) {
-  console.error('Twitter limit: ', message)
+  console.error('Twitter limit', message)
 })
 twitterTracker.on('disconnect', function (message) {
-  console.error('Twitter disconnect: ', message)
+  console.error('Twitter disconnect', message)
 })
-twitterTracker.on('connect', function (request) {
+twitterTracker.on('connect', function (statusMessage) {
   console.info('Twitter connecting and waiting for a response from Twitter')
-  server.twitterConnected(request)
 })
-twitterTracker.on('connected', function (request) {
-  console.info('Twitter connected ', request.statusMessage)
+twitterTracker.on('connected', function (statusMessage) {
+  console.info('Twitter connected', statusMessage)
+})
+twitterTracker.on('connection-error', function (statusMessage) {
+  console.info('Connection error', statusMessage)
 })
 twitterTracker.on('reconnect', function (request, response, connectInterval) {
-  console.info('Twitter reconnecting in ', connectInterval)
+  console.info('Twitter reconnecting in', connectInterval)
 })
 twitterTracker.on('warning', function (message) {
-  console.warn('Twitter warning: ', message)
+  console.warn('Twitter warning', message)
 })
 
 createIndex.on('tweet-added', function (record, index) {
-  return console.info('Tweet: ', record, 'Index is at: ', index)
+  console.info('Tweet ', record, 'Index is at ', index)
 })
 createIndex.on('add-tweet-error', function (err, tweet) {
   console.error('Error adding tweet', err, tweet)

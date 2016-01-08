@@ -60,7 +60,7 @@ var Server = function () {
 
   server.ioListen = function () {
     server.ioServer.sockets.on('connection', function (socket) {
-      server.on('index-changed', function (number) {
+      server.on('broadcast-index', function (number) {
         server._index = number
         socket.emit('index-changed', {
           'index': number
@@ -74,16 +74,8 @@ var Server = function () {
     })
   }
   
-  server.changeIndex = function (newIndex) {
-    server.emit('index-changed', newIndex)
-  }
-  
-  server.twitterConnected = function (request) {
-    if (request.statusMessage !== 'OK') {
-      server.emit('broadcast-info', {
-        'info': request.statusMessage
-      })
-    }
+  server.broadcast = function(type, message) {
+    server.emit(type, message)
   }
 
   // Start a server

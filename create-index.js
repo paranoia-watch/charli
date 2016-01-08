@@ -9,8 +9,6 @@ var CreateIndex = function (db) {
   var createIndex = new events.EventEmitter()
 
   createIndex.addTweet = function (tweet) {
-    console.log('Tweet', tweet)
-
     var record = new db.Index({
       trigger: 'tweet',
       triggerId: tweet.id,
@@ -20,7 +18,7 @@ var CreateIndex = function (db) {
     })
 
     record.save(function (err) {
-      if(!settings.database.writeEnabled) {
+      if(!settings.db.writeEnabled) {
         if (err) console.error('Error on save!', err, record)
         createIndex.calculateIndexFromDatabase()
         return createIndex.emit('add-tweet-error', err)
