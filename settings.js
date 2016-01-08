@@ -12,7 +12,8 @@ settings.server = {
 settings.db = {
   writeEnabled: process.env.DBWRITEENABLED || false,
   uri: process.env.DBURI,
-  disabled: process.env.DBDISABLED || false
+  disabled: process.env.DBDISABLED || false,
+  uri: process.env.DBURI
 }
 
 // Streams
