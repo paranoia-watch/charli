@@ -8,7 +8,9 @@
 
 var mongoose = require('mongoose'),
   schemas = require('./schema'),
-  Index = schemas.getIndexesIndex
+  peilingwijzer = require("../../peilingwijzer/index"),
+  Index = schemas.getIndexesModel,
+  PeilingwijzerModel = schemas.createPeilingwijzerModel()
 
 function connect (callback) {
   mongoose.connect(dbsettings.uri, function (error, data) {
@@ -22,17 +24,21 @@ function createIndex (callback) {
 }
 
 function processPeilingwijzerData (callback) {
-  console.warn('to be implemented!')
+  peilingwijzer.getData(function(data) {
+    savePeilingwijzerData(data, callback)
+  })
 }
 
-function getIndexSchemaForIndexCollection () {
-  return new mongoose.Schema({
-    trigger: String,
-    triggerId: String,
-    theIndex: Number,
-    weight: Number,
-    date: Date,
-  })
+function savePeilingwijzerData(data, callback) {
+  var numRecords = data.length,
+    numSaved = 0
+    for(var i in data) {
+      var model = new PeilingwijzerModel(data[i]);
+      model.save(function(err) {
+        numSaved++
+        if(numSaved == numRecords) return callback(data)
+      })
+    }
 }
 
 exports.connect = connect

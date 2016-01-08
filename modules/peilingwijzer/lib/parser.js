@@ -37,14 +37,10 @@ function parseSingleObjectFromRowDataAndFieldNames (rowData, fieldNames) {
   var cellValues = getCellValuesByRowData(rowData)
   if (fieldNames.length !== cellValues.length) return console.error('number of field names (' + fieldNames.length + ") doesn't match the number of cell values (" + cellValues.length + ')')
   for (var i in fieldNames) {
-    object[fieldNames[i]] = parseCellValueByRawValueAndColumnIndex(cellValues[i], i)
+    if(i == 0) object.date = parseCellDateStringToDate(cellValues[i])
+    else object[fieldNames[i]] = getAverageByRawCellValue(cellValues[i])
   }
   return object
-}
-
-function parseCellValueByRawValueAndColumnIndex (rawValue, columnIndex) {
-  if (columnIndex == 0) return parseCellDateStringToDate(rawValue)
-  return getAverageByRawCellValue(rawValue)
 }
 
 function parseCellDateStringToDate (cellDateString) {

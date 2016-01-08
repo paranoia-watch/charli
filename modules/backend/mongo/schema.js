@@ -8,8 +8,12 @@
 
 var mongoose = require('mongoose')
 
-function getIndexesIndex () {
+function getIndexesModel () {
   return mongoose.model('Index', getIndexesSchema())
+}
+
+function getPeilingwijzerModel () {
+  return mongoose.model('Peilingwijzer', getPeilingwijzerSchema())
 }
 
 function getIndexesSchema () {
@@ -22,4 +26,22 @@ function getIndexesSchema () {
   })
 }
 
-exports.getIndexesIndex = getIndexesIndex
+function getPeilingwijzerSchema () {
+  return new mongoose.Schema({
+    VVD: Number,
+    PvdA: Number,
+    PVV: Number,
+    SP: Number,
+    CDA: Number,
+    D66: Number,
+    CU: Number,
+    GL: Number,
+    SGP: Number,
+    PvdD: Number,
+    '50PLUS': Number,
+    date: Date,
+  })
+}
+
+exports.createIndexModel = getIndexesModel
+exports.createPeilingwijzerModel = getPeilingwijzerModel
