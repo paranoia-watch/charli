@@ -2,6 +2,12 @@
 
 Giving you an index of how fearful everyone is.
 
+# How Charli calculates the index
+
+Charli receives a subset of tweets with the words "terreur", "terrorisme" and "aanslag". The amount of followers of a user that sent the tweet is the weight that a tweet is counted with. The index is total weight of all these tweets in the last 60 minutes.
+
+# Technical
+
 ## Web app
 
 URL: `http://localhost:8080/`
