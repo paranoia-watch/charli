@@ -20,7 +20,7 @@ socket.on('info', function (data) {
 	console.log(data)
 })
 
-socket.on('update', function (data) {
+socket.on('index-changed', function (data) {
 	// 	document.getElementById("index").innerHTML = data.index;
 	var oldIndex = parseFloat(document.getElementById("index").innerHTML)
 	index = parseFloat(data.index)
