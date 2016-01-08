@@ -12,7 +12,7 @@ var Db = function (settings) {
   }
   var db = new events.EventEmitter()
   db.settings = settings
-  
+
   mongoose.connect(settings.uri, function (err, res) {
     if (err) {
       db.emit('connection-error', err, res)
@@ -20,7 +20,7 @@ var Db = function (settings) {
       db.emit('connected')
     }
   })
-  
+
   indexSchema = new mongoose.Schema({
     trigger: String,
     triggerId: String,
@@ -30,7 +30,7 @@ var Db = function (settings) {
   })
 
   db.Index = mongoose.model('Index', indexSchema)
-  
+
   return db
 }
 

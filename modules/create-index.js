@@ -40,7 +40,7 @@ var CreateIndex = function (settings, db) {
 
   createIndex.calculateIndexFromDatabase = function (accountId) {
     var thisCutOff = new cutOff()
-    if(!db) return createIndex.emit('calculate-index-from-database-error', 'No DB connected')
+    if (!db) return createIndex.emit('calculate-index-from-database-error', 'No DB connected')
     return db.Index.aggregate([{
       $match: {
         date: {

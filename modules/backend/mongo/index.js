@@ -7,7 +7,8 @@
  */
 
 var mongoose = require('mongoose'),
-  schemas = require('./schema')
+  schemas = require('./schema'),
+  Index = schemas.getIndexesIndex
 
 function connect (callback) {
   mongoose.connect(dbsettings.uri, function (error, data) {
@@ -35,5 +36,5 @@ function getIndexSchemaForIndexCollection () {
 }
 
 exports.connect = connect
+exports.createIndex = createIndex
 exports.processPeilingwijzerData = processPeilingwijzerData
-exports.getIndexesIndex = schemas.getIndexesIndex

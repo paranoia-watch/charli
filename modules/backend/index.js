@@ -15,7 +15,6 @@ var backend = require('./' + settings.backend + '/index'),
 
 function main () {
   var api = new events.EventEmitter()
-  api.Index = backend.getIndexesIndex()
 
   if (dbsettings.disabled) return shutdown('The database is disabled in the settings')
   if (!dbsettings.uri) return shutdown('No database URI specified')
@@ -24,6 +23,9 @@ function main () {
     if (error) return api.emit('connection-error', err, res)
     api.emit('connected')
   })
+
+  api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
+  api.getIndexesIndex = function (callback) { return backend.processPeilingwijzerData(callback) }
 
   return api
 }
