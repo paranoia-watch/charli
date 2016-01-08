@@ -2,3 +2,4 @@ node_modules
 .cache.json
 twitter-login-token.json
 .env
+.DS_Store
