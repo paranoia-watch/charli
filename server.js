@@ -1,115 +1,103 @@
 // Import settings
-var twitterAuthKeys = require('./twitter-login-token.json')
-var settings = require('./settings.json')
+var settings = require('./settings.js')
 
-// Start a server
 var http = require('http')
 var express = require('express')
-var app = express()
-var server = http.createServer(app)
-var io = require('socket.io')(server)
-var port = process.env.PORT || 8080;
+var socketio = require('socket.io')
 
-server.listen(
-	port,
-	function () {
-		console.log('The fear index is running on port ' + port)
+var events = require('events')
 
-		app.get('/style.css', function (req, res) {
-			res.sendFile('style.css', {
-				root: './static'
-			});
-		})
-		app.get('/app.js', function (req, res) {
-			res.sendFile('app.js', {
-				root: './static'
-			});
-		})
-		app.get('/jquery.js', function (req, res) {
-			res.sendFile('jquery.js', {
-				root: './static'
-			});
-		})
-		app.get('/bigtext.jquery.js', function (req, res) {
-			res.sendFile('bigtext.jquery.js', {
-				root: './static'
-			});
-		})
-		app.get('/animateNumber.jquery.js', function (req, res) {
-			res.sendFile('animateNumber.jquery.js', {
-				root: './static'
-			});
-		})
+var twitterTracker = require('./twitter-tracker.js')
 
-		app.get('/', function (req, res) {
-			res.set('Content-Type', 'text/html')
-			res.send('<!DOCTYPE html>' + '<html lang="en">' + '<head>' + '<meta charset="UTF-8">' + '<title>paranoia.watch</title>' + '<link rel="stylesheet" href="style.css">' + '<script src="/socket.io/socket.io.js"></script>' + '</head>' + '<body>' + '<div id="bigtext">' + '<div id="display"><span id="index">' + degrees.getIndex() + '</span><span id="degrees">&deg;</span></div>' + '<div id="header">paranoia.watch</div>' + '</div>' + '<script src="jquery.js"></script>' + '<script src="bigtext.jquery.js"></script>' + '<script src="animateNumber.jquery.js"></script>' + '<script src="app.js" charset="utf-8"></script>' + '</body>' + '</html>')
-		})
+var Server = function () {
+  if (settings.server.disabled) {
+    return console.info('The server has been disabled in the settings.')
+  }
+  var server = new events.EventEmitter()
 
-		app.get('/api', function (req, res) {
-			res.set('Content-Type', 'application/json')
-			res.send({
-				"charli": degrees.getIndex()
-			})
-		})
-	})
+  server.httpListen = function () {
+    console.info('The fear index is listening on port ' + settings.server.port)
 
-// Start streaming from Twitter
+    server.app.get('/style.css', function (req, res) {
+      res.sendFile('style.css', {
+        root: './static'
+      })
+    })
+    server.app.get('/app.js', function (req, res) {
+      res.sendFile('app.js', {
+        root: './static'
+      })
+    })
+    server.app.get('/jquery.js', function (req, res) {
+      res.sendFile('jquery.js', {
+        root: './static'
+      })
+    })
+    server.app.get('/bigtext.jquery.js', function (req, res) {
+      res.sendFile('bigtext.jquery.js', {
+        root: './static'
+      })
+    })
+    server.app.get('/animateNumber.jquery.js', function (req, res) {
+      res.sendFile('animateNumber.jquery.js', {
+        root: './static'
+      })
+    })
 
-var Twit = require('twit')
-var Twitter = new Twit(twitterAuthKeys)
+    server.app.get('/', function (req, res) {
+      res.set('Content-Type', 'text/html')
+      res.send('<!DOCTYPE html>' + '<html lang="en">' + '<head>' + '<meta charset="UTF-8">' + '<title>paranoia.watch</title>' + '<link rel="stylesheet" href="style.css">' + '<script src="/socket.io/socket.io.js"></script>' + '</head>' + '<body>' + '<div id="bigtext">' + '<div id="display"><span id="index">' + server._index + '</span><span id="degrees">&deg;</span></div>' + '<div id="header">paranoia.watch</div>' + '</div>' + '<script src="jquery.js"></script>' + '<script src="bigtext.jquery.js"></script>' + '<script src="animateNumber.jquery.js"></script>' + '<script src="app.js" charset="utf-8"></script>' + '</body>' + '</html>')
+    })
 
-console.log('Start the Twitter stream and track ', settings.track)
-var stream = Twitter.stream('statuses/filter', {
-	track: settings.track
-})
+    server.app.get('/api', function (req, res) {
+      res.set('Content-Type', 'application/json')
+      res.send({
+        'charli': degrees.getIndex()
+      })
+    })
 
-stream.on('limit', function (message) {
-	console.log("Limit: ", message)
-})
+  }
 
-stream.on('disconnect', function (message) {
-	console.log("Disconnect: ", message)
-})
+  server.ioListen = function () {
+    server.ioServer.sockets.on('connection', function (socket) {
+      server.on('index-changed', function (number) {
+        server._index = number
+        socket.emit('index-changed', {
+          'index': number
+        })
+      })
+      server.on('broadcast-info', function (message) {
+        socket.emit('info', {
+          'info': message
+        })
+      })
+    })
+  }
+  
+  server.changeIndex = function (newIndex) {
+    server.emit('index-changed', newIndex)
+  }
+  
+  server.twitterConnected = function (request) {
+    if (request.statusMessage !== 'OK') {
+      server.emit('broadcast-info', {
+        'info': request.statusMessage
+      })
+    }
+  }
 
-stream.on('connect', function (request) {
-	console.log("Connecting and waiting for a response from Twitter")
-})
+  // Start a server
+  server.app = express()
+  server.httpServer = http.createServer(server.app)
+  server.ioServer = socketio(server.httpServer)
 
-stream.on('connected', function (request) {
-	console.log("Connected ", request.statusMessage)
-})
+  server.httpServer.listen(
+    settings.server.port,
+    server.httpListen
+  )
+  server.ioListen()
+  
+  return server
+}
 
-stream.on('reconnect', function (request, response, connectInterval) {
-	console.log("Reconnecting in ", connectInterval)
-})
-
-stream.on('warning', function (message) {
-	console.log("warning: ", message)
-})
-
-// Manage incoming Tweets
-var degrees = require('./create-index.js')
-degrees.initialise()
-
-stream.on('tweet', function (tweet) {
-	degrees.addTweet(tweet)
-})
-
-// Start Socket.io Server
-console.log('Start the Socket.io server ')
-
-io.sockets.on('connection', function (socket) {
-	degrees.on('changed', function (number) {
-		socket.emit('update', {
-			'index': number
-		})
-	})
-	stream.on('connected', function (request) {
-		if (request.statusMessage !== "OK") {
-			socket.emit('info', {
-				'info': request.statusMessage
-			})
-		}
-	})
-})
+module.exports = Server

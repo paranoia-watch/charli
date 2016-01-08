@@ -1,97 +1,82 @@
-var settings = require('./settings.json')
+var settings = require('./settings.js')
+var events = require('events')
 
-var fs = require('fs')
-var events = require("events")
+var CreateIndex = function (db) {
+  if (settings.index.disabled) {
+    return console.info('Creation of the index is disabled in the settings')
+  }
+  
+  var createIndex = new events.EventEmitter()
 
-// Start the database
-var mongoose = require("mongoose")
-var dbUri = process.env.MONGOLAB_URI
+  createIndex.addTweet = function (tweet) {
+    console.log('Tweet', tweet)
 
-mongoose.connect(dbUri, function (err, res) {
-	if (err) {
-		console.log('ERROR connecting to: ' + dbUri + '. ' + err)
-	} else {
-		console.log('Successfully connected to the Database')
-	}
-})
+    var record = new db.Index({
+      trigger: 'tweet',
+      triggerId: tweet.id,
+      date: new Date(tweet.created_at),
+      weight: parseFloat(tweet.user.followers_count),
+      theIndex: createIndex.theIndex
+    })
 
-var indexSchema = new mongoose.Schema({
-	trigger: String,
-	triggerId: String,
-	theIndex: Number,
-	weight: Number,
-	date: Date,
-})
+    record.save(function (err) {
+      if(!settings.database.writeEnabled) {
+        if (err) console.error('Error on save!', err, record)
+        createIndex.calculateIndexFromDatabase()
+        return createIndex.emit('add-tweet-error', err)
+      }
+      return createIndex.emit('add-tweet-error', 'DB Write disabled')
+    })
+    createIndex.emit('tweetAdded', record, createIndex.getIndex())
+  }
 
-var Index = mongoose.model('Index', indexSchema)
+  createIndex.calculateIndexFromDatabase = function (accountId) {
+    var thisCutOff = new cutOff()
+    return db.Index.aggregate([{
+      $match: {
+        date: {
+          $gte: thisCutOff
+        }
+      }
+    }, {
+      $group: {
+        _id: '$trigger',
+        amount: {
+          $sum: 1
+        },
+        weight: {
+          $sum: '$weight'
+        },
+        average: {
+          $avg: '$weight'
+        }
+      }
+    }], function (err, result) {
+      if (err || !result[0]) {
+        console.error('calculateIndexFromDatabase', err, result)
+        return createIndex.emit('calculate-index-from-database-error', err, result)
+      }
+      createIndex.emit('index-calculated-from-database', result)
+      createIndex.setIndex(result[0].weight)
+    })
+  }
 
-var degrees = new events.EventEmitter
+  cutOff = function () {
+    return new Date(Date.now() - settings.index.timeSpanToCalculateOver)
+  }
 
-degrees.addTweet = function (tweet) {
-	var record = new Index({
-		trigger: "tweet",
-		triggerId: tweet.id,
-		date: new Date(tweet.created_at),
-		weight: parseFloat(tweet.user.followers_count),
-		theIndex: degrees.theIndex
-	})
+  createIndex.getIndex = function () {
+    return createIndex.theIndex
+  }
 
-	record.save(function (err) {
-		if (err) console.log('Error on save!', err, record)
-		degrees.calculateIndexFromDatabase()
-	})
+  createIndex.setIndex = function (number) {
+    createIndex.theIndex = parseFloat((number / 1000) - 50).toFixed(2)
+    createIndex.emit('index-changed', createIndex.getIndex())
+  }
 
-	console.log("Tweet: ", record, "Index is at: ", degrees.getIndex())
+  createIndex.calculateIndexFromDatabase()
+
+  return createIndex
 }
 
-degrees.calculateIndexFromDatabase = function (accountId) {
-	var cutOff = new degrees.cutOff()
-	return Index.aggregate([{
-		$match: {
-			date: {
-				$gte: cutOff
-			}
-		}
-	}, {
-		$group: {
-			_id: "$trigger",
-			amount: {
-				$sum: 1
-			},
-			weight: {
-				$sum: "$weight"
-			},
-			average: {
-				$avg: "$weight"
-			}
-		}
-	}], function (err, result) {
-		if (err || !result[0]) {
-			console.log('ERROR calculateIndexFromDatabase', err, result)
-			return
-		}
-		console.log(result)
-		degrees.setIndex(result[0].weight)
-	})
-}
-
-degrees.cutOff = function () {
-	return new Date(Date.now() - 60 * 60 * 1000)
-}
-
-degrees.initialise = function () {
-	degrees.calculateIndexFromDatabase()
-}
-
-degrees.theIndex = 0
-
-degrees.getIndex = function () {
-	return degrees.theIndex
-}
-
-degrees.setIndex = function (number) {
-	degrees.theIndex = parseFloat( (number / 1000) - 50).toFixed(2)
-	degrees.emit("changed", degrees.getIndex())
-}
-
-module.exports = degrees
+module.exports = CreateIndex
