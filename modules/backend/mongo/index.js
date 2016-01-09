@@ -7,8 +7,9 @@
  */
 
 var mongoose = require('mongoose'),
+  async = require('async'),
   schemas = require('./schema'),
-  peilingwijzer = require("../../peilingwijzer/index"),
+  peilingwijzer = require('../../peilingwijzer/index'),
   Index = schemas.getIndexesModel,
   PeilingwijzerModel = schemas.createPeilingwijzerModel()
 
@@ -24,21 +25,20 @@ function createIndex (callback) {
 }
 
 function processPeilingwijzerData (callback) {
-  peilingwijzer.getData(function(data) {
+  peilingwijzer.getData(function (data) {
     savePeilingwijzerData(data, callback)
   })
 }
 
-function savePeilingwijzerData(data, callback) {
-  var numRecords = data.length,
-    numSaved = 0
-    for(var i in data) {
-      var model = new PeilingwijzerModel(data[i]);
-      model.save(function(err) {
-        numSaved++
-        if(numSaved == numRecords) return callback(data)
-      })
-    }
+function savePeilingwijzerData (data, callback) {
+  async.mapSeries(data, function (item, savecb) {
+    var model = new PeilingwijzerModel(item)
+    model.save(function (err) {
+      return savecb()
+    })
+  }, function () {
+    return callback(data)
+  })
 }
 
 exports.connect = connect

@@ -39,7 +39,7 @@ function getPeilingwijzerSchema () {
     SGP: Number,
     PvdD: Number,
     '50PLUS': Number,
-    date: Date,
+    date: Date
   })
 }
 
