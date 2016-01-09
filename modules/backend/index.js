@@ -39,5 +39,5 @@ module.exports = main
 
 // var test = main()
 // test.processPeilingwijzerData(function(data) {
-//   console.log("done processPeilingwijzerData", data);
+//   console.log("done processPeilingwijzerData", data)
 // })

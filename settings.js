@@ -1,6 +1,6 @@
 var settings = {}
 
-settings.backend = process.env.BACKEND || "mongo"
+settings.backend = process.env.BACKEND || 'mongo'
 
 // Process
 settings.server = {
