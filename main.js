@@ -50,13 +50,13 @@ API.on('publication-save-error', function (error) {
   console.error('API failed to save a publication\nbackend says: ' + error + '\n')
 })
 
-API.on('growth-updated', function (growthNumbers) {
-  console.info('broadcasting growth numbers', growthNumbers)
-  broadcaster.broadcast('growth-updated', growthNumbers)
+API.on('paranoia-updated', function (growthNumbers) {
+  console.info('broadcasting paranoia', growthNumbers)
+  broadcaster.broadcast('paranoia-updated', growthNumbers)
 })
 
-API.on('growth-update-error', function (error) {
-  console.error('API failed to update growth numbers\nbackend says: ' + error + '\n')
+API.on('paranoia-update-error', function (error) {
+  console.error('API failed to update paranoia\nbackend says: ' + error + '\n')
 })
 
 function getGrowthNumbers () {
