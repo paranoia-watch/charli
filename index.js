@@ -33,7 +33,7 @@ API.on('collection-connected', function (medium) {
 })
 
 API.on('collection-connection-error', function (feedback) {
-  console.error('API collection connection error for medium ' + feedback.medium + '\ncollection connection says: ' + feedback.error + '\n')
+  console.error('API collection connection error for medium ' + feedback.medium + '; collection connection says: ' + feedback.error + '\n')
 })
 
 API.on('publication-collected', function (publication) {
