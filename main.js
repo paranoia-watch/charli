@@ -26,8 +26,15 @@ API.on('collection-connection-error', function (feedback) {
   console.error('API collection connection error for medium ' + feedback.medium + '\ncollection connection says: ' + feedback.error + '\n')
 })
 
-
 API.on('publication-collected', function (publication) {
   console.info('API collected a publication', publication, '\n')
+  API.savePublication(publication)
 })
 
+API.on('publication-saved', function () {
+  console.info('API saved a publication\n')
+})
+
+API.on('publication-save-error', function (error) {
+  console.error('API failed to save a publication\nbackend says: ' + error + '\n')
+})
