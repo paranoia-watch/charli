@@ -17,3 +17,7 @@ API.on('connected', function () {
 API.on('connection-error', function (error) {
   console.error('API connection error', error)
 })
+
+API.on('publication-collected', function (publication) {
+  console.info('API collected a publication', publication, '\n')
+})
