@@ -26,21 +26,21 @@ var CreateIndex = function (settings, db) {
       theIndex: createIndex.theIndex
     })
 
-    record.save(function (error) {
-      if (!db.settings.writeEnabled) {
-        if (error) {
-          return createIndex.emit('add-tweet-error', err)
-        }
-        return createIndex.calculateIndexFromDatabase()
-      }
+    if (!db.settings.writeEnabled)
       return createIndex.emit('add-tweet-error', 'DB Write disabled')
+
+    record.save(function (error) {
+      if (error) return createIndex.emit('add-tweet-error', err)
+      return createIndex.calculateIndexFromDatabase()
     })
     createIndex.emit('tweetAdded', record, createIndex.getIndex())
   }
 
   createIndex.calculateIndexFromDatabase = function (accountId) {
     var thisCutOff = new cutOff()
-    if(!db) return createIndex.emit('calculate-index-from-database-error', 'No DB connected')
+    if (!db)
+      return createIndex.emit('calculate-index-from-database-error', 'No DB connected')
+
     return db.Index.aggregate([{
       $match: {
         date: {

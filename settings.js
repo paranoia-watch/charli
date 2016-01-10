@@ -1,5 +1,7 @@
 var settings = {}
 
+settings.backend = process.env.BACKEND || 'mongo'
+
 // Process
 settings.server = {
   port: process.env.SERVERPORT || 8080,
@@ -9,6 +11,8 @@ settings.server = {
 // Database
 settings.db = {
   writeEnabled: process.env.DBWRITEENABLED || false,
+  uri: process.env.DBURI,
+  disabled: process.env.DBDISABLED || false,
   uri: process.env.DBURI
 }
 

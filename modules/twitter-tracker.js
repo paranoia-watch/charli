@@ -26,7 +26,7 @@ var TwitterTracker = function (settings) {
     console.error('Twitter is not configured with the required tracking parameters')
     return false
   }
-  
+
   var twitterAuthKeys = {
     'consumer_key': settings.consumerKey,
     'consumer_secret': settings.consumerSecret,
@@ -64,7 +64,7 @@ var TwitterTracker = function (settings) {
   stream.on('warning', function (message) {
     twitterTracker.emit('warning', message)
   })
-    
+
   return twitterTracker
 }
 

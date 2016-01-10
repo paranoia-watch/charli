@@ -10,7 +10,7 @@ var twitterTracker = require('./twitter-tracker.js')
 
 var Server = function (settings) {
   // TODO Make everything private
-  
+
   if (settings.disabled) {
     return console.info('The server has been disabled in the settings.')
   }
@@ -80,7 +80,7 @@ var Server = function (settings) {
     server.httpListen
   )
   server.ioListen()
-  
+
   return server
 }
 
