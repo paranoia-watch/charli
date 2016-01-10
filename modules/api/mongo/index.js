@@ -10,6 +10,7 @@ var mongoose = require('mongoose'),
   async = require('async'),
   schemas = require('./schema'),
   peilingwijzer = require('../../peilingwijzer/index'),
+  twitter = require('../../twitter/index'),
   Index = schemas.getIndexesModel,
   PeilingwijzerModel = schemas.createPeilingwijzerModel()
 
@@ -20,7 +21,7 @@ function connect (callback) {
   })
 }
 
-function createIndex (callback) {
+function processTwitterPublications (callback) {
   console.warn('to be implemented!')
 }
 
@@ -41,6 +42,12 @@ function savePeilingwijzerData (data, callback) {
   })
 }
 
+function savePublication(publication, callback) {
+  console.log("saving publication", publication)
+  var model = new PublicationModel(publication)
+  model.save(callback)
+}
+
 exports.connect = connect
-exports.createIndex = createIndex
+exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
