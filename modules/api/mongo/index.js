@@ -38,7 +38,6 @@ function savePeilingwijzerData (data, callback) {
 }
 
 function savePublication(publication, callback) {
-  console.log("saving publication", publication)
   var model = new PublicationModel(publication)
   model.save(callback)
 }

@@ -5,10 +5,9 @@
  * @author Boris van Hoytema <boris AT newatoms DOT com>
  */
 
-require('dotenv').config({silent: true})
 var tracker = require('./lib/tracker')
 var parseTweet = require('./lib/tweet-parser')
-var settings = require('../../settings.js').twitterTracker
+var settings = global.settings.twitterTracker
 var events = require('events')
 
 function trackStream (termsArray) {

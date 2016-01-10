@@ -6,13 +6,20 @@
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  */
 
+require('dotenv').config({silent: true, path: '../.env'})
+global.settings = require('../../../settings')
+
 var API = new require("../")()
 var publicationProcessor = API.processPublications()
 
-publicationProcessor.on("publication-found", function(publication) {
-    console.log("a publication was added!", publication)
+publicationProcessor.on("publication", function(publication) {
+    console.log("\na publication was added!")
 })
 
-publicationProcessor.on("publication-saved", function(publication) {
-    console.log("a publication was saved!", publication)
+publicationProcessor.on("save", function(publication) {
+    console.log("\na publication was saved!", publication)
+})
+
+publicationProcessor.on("save-error", function(error) {
+    console.log("\na publication couldn't be saved!", error)
 })

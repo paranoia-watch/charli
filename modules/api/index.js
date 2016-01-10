@@ -6,11 +6,9 @@
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  */
 
-require('dotenv').config({silent: true, path: '../../.env'})
-global.settings = require('../../settings')
-global.dbsettings = settings.db
-var backend = require('./' + settings.backend + '/index')
-var twitter = require('../twitter/index')
+global.dbsettings = global.settings.db
+var backend = require('./' + settings.backend)
+var twitter = require('../twitter')
 var events = require('events')
 
 function API () {
@@ -29,7 +27,7 @@ function API () {
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
   
-  api.processPublications = backend.processPublications
+  api.processPublications = processPublications
 
   return api
 }
@@ -37,11 +35,21 @@ function API () {
 function processPublications() {
   var publications = new events.EventEmitter()
 
-  var twitterPublications = new twitter.publisher(['plas', 'poep', 'seks', 'kut', 'piemel']);
+  var twitterPublications = new twitter.publisher(['aanslag', 'vvd', 'schaatsen', 'kramer', 'politiek']);
+
+  twitterPublications.on('connection-error', function (error) {
+    console.log("error!", error)
+  })
+
+  twitterPublications.on('connect', function () {
+    console.log("connection!")
+  })
+
   twitterPublications.on('publication', function (publication) {
-    publications.emit('publication-found', publication)
-    backend.savePublication(publication, function(err) {
-      publications.emit('publication-saved', publication)
+    publications.emit('publication', publication)
+    backend.savePublication(publication, function(error) {
+      if(error) return publications.emit('save-error', error)
+      publications.emit('save', publication)
     })
   })
 
