@@ -8,7 +8,7 @@
 var twitter = require('../')
 var twitterPublisher = twitter.publisher
 
-var terms = ['aanslag']
+var terms = ['aanslag', 'buitenhof', 'russen', 'voetbal']
 console.log('Start the Twitter stream and track', terms)
 
 var publisher = new twitterPublisher(terms);
@@ -17,8 +17,8 @@ publisher.on('publication', function(tweet) {
     console.log(tweet)
 })
 
-publisher.on('connected', function() {
-    console.log('connected!')
+publisher.on('connect', function(statusMessage) {
+    console.log('connected!', statusMessage)
 })
 
 publisher.on('connection-error', function(error) {

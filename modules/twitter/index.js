@@ -29,8 +29,8 @@ function getPublicationStream(searchTerms) {
     var publicationStream = new events.EventEmitter()
     var twitterTrack = trackStream(searchTerms)
 
-    twitterTrack.on('connected', function() {
-      publicationStream.emit('connected')
+    twitterTrack.on('connect', function(statusMessage) {
+      publicationStream.emit('connect', statusMessage)
     })
 
     twitterTrack.on('connection-error', function(error) {
