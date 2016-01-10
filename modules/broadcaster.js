@@ -28,7 +28,7 @@ var Broadcaster = function (settings) {
     socketServer.sockets.on('connection', function (socket) {
       broadcaster.emit('client-connected')
       internalAffairs.on('broadcast', function (affair) {
-        socket.emit(affair.eventName, affair.payload);
+        socket.emit(affair.eventName, affair.payload)
       })
     })
   }

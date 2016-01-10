@@ -64,8 +64,8 @@ function getGrowthNumbers () {
   API.updateGrowthNumbers(['Amsterdam', 'Paris', 'Berlin'], new Date(), getCurrentTimeframeSpan())
 }
 
-function parseGrowthNumbersToClientReadibleObject(growthNumbers) {
-  var object = {paranoiaChange:[]};
+function parseGrowthNumbersToClientReadibleObject (growthNumbers) {
+  var object = {paranoiaChange: []}
   object.paranoiaChange.push({
     interval: getCurrentTimeframeSpan(),
     locations: parseLocationDataFromGrowthNumbers(growthNumbers)
@@ -73,9 +73,9 @@ function parseGrowthNumbersToClientReadibleObject(growthNumbers) {
   return object
 }
 
-function parseLocationDataFromGrowthNumbers(growthNumbers) {
+function parseLocationDataFromGrowthNumbers (growthNumbers) {
   var locationNames = Object.keys(growthNumbers)
-  return locationNames.map(function(locationName) {
+  return locationNames.map(function (locationName) {
     return {
       name: locationName,
       change: growthNumbers[locationName]
@@ -83,6 +83,6 @@ function parseLocationDataFromGrowthNumbers(growthNumbers) {
   })
 }
 
-function getCurrentTimeframeSpan() {
+function getCurrentTimeframeSpan () {
   return 1000 * 60 * 60
 }

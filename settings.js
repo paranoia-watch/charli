@@ -28,10 +28,10 @@ settings.twitter = {
 }
 
 settings.trackingTerms = process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json')
-settings.getTrackingTermsAsFlatArray = function() {
-  var array = [];
-  var keys = Object.keys(settings.trackingTerms);
-  return keys.map(function(key) {
+settings.getTrackingTermsAsFlatArray = function () {
+  var array = []
+  var keys = Object.keys(settings.trackingTerms)
+  return keys.map(function (key) {
     var cityTerms = settings.trackingTerms[key]
     array = array.concat(cityTerms)
     return array
