@@ -10,7 +10,7 @@ require('dotenv').config({silent: true, path: '../../.env'})
 global.settings = require('../../settings')
 global.dbsettings = settings.db
 var backend = require('./' + settings.backend + '/index')
-var twitter = require('../../twitter/index')
+var twitter = require('../twitter/index')
 var events = require('events')
 
 function API () {
@@ -29,22 +29,19 @@ function API () {
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
   
-  api.processPublications = function () {
-    return backend.processPublications()
-  }
+  api.processPublications = backend.processPublications
 
   return api
 }
 
-function processPublications(callback) {
+function processPublications() {
   var publications = new events.EventEmitter()
 
   var twitterPublications = new twitter.publisher(['plas', 'poep', 'seks', 'kut', 'piemel']);
-    twitterPublications.on('publication', function (publication) {
-      publications.emit('publication-found', publication)
-      backend.savePublication(publication, function(err) {
-        publications.emit('publication-added', publication)
-      })
+  twitterPublications.on('publication', function (publication) {
+    publications.emit('publication-found', publication)
+    backend.savePublication(publication, function(err) {
+      publications.emit('publication-saved', publication)
     })
   })
 

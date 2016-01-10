@@ -8,21 +8,21 @@
 
 var mongoose = require('mongoose')
 
-function getIndexesModel () {
-  return mongoose.model('Index', getIndexesSchema())
+function getPublicationModel () {
+  return mongoose.model('Index', getPublicationSchema())
 }
 
 function getPeilingwijzerModel () {
   return mongoose.model('Peilingwijzer', getPeilingwijzerSchema())
 }
 
-function getIndexesSchema () {
+function getPublicationSchema () {
   return new mongoose.Schema({
-    trigger: String,
-    triggerId: String,
-    theIndex: Number,
-    weight: Number,
+    medium: String,
+    mediumPublicationId: Number,
+    publisherLocation: String,
     date: Date,
+    weight: Number
   })
 }
 
@@ -43,5 +43,5 @@ function getPeilingwijzerSchema () {
   })
 }
 
-exports.createIndexModel = getIndexesModel
+exports.createPublicationModel = getPublicationModel
 exports.createPeilingwijzerModel = getPeilingwijzerModel

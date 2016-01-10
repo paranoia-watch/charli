@@ -21,4 +21,4 @@ function getData (callback) {
   })
 }
 
-exports.getData = parser
+exports.getData = getData

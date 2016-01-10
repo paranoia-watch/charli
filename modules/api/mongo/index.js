@@ -6,23 +6,18 @@
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  */
 
-var mongoose = require('mongoose'),
-  async = require('async'),
-  schemas = require('./schema'),
-  peilingwijzer = require('../../peilingwijzer/index'),
-  twitter = require('../../twitter/index'),
-  Index = schemas.getIndexesModel,
-  PeilingwijzerModel = schemas.createPeilingwijzerModel()
+var mongoose = require('mongoose')
+var async = require('async')
+var schemas = require('./schema')
+var peilingwijzer = require('../../peilingwijzer/index')
+var PeilingwijzerModel = schemas.createPeilingwijzerModel()
+var PublicationModel = schemas.createPublicationModel()
 
 function connect (callback) {
   mongoose.connect(dbsettings.uri, function (error, data) {
     if (error) return callback(error)
     callback(null, data)
   })
-}
-
-function processTwitterPublications (callback) {
-  console.warn('to be implemented!')
 }
 
 function processPeilingwijzerData (callback) {
