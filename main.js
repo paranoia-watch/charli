@@ -20,8 +20,8 @@ broadcaster.on('client-connected', function () {
 API.on('backend-connected', function () {
   var trackingTerms = settings.getTrackingTermsAsFlatArray()
   console.info('API backend connected, you can now read from and write to it :)')
-  API.collectPublications(settings, trackingTerms)
   getGrowthNumbers()
+  API.collectPublications(settings, trackingTerms)
 })
 
 API.on('backend-connection-error', function (error) {
@@ -51,8 +51,9 @@ API.on('publication-save-error', function (error) {
 })
 
 API.on('paranoia-updated', function (growthNumbers) {
-  console.info('broadcasting paranoia', growthNumbers)
-  broadcaster.broadcast('paranoia-updated', growthNumbers)
+  var object = parseGrowthNumbersToClientReadibleObject(growthNumbers)
+  console.info('broadcasting paranoia', object)
+  broadcaster.broadcast('paranoia-updated', object)
 })
 
 API.on('paranoia-update-error', function (error) {
@@ -60,5 +61,28 @@ API.on('paranoia-update-error', function (error) {
 })
 
 function getGrowthNumbers () {
-  API.updateGrowthNumbers(['Amsterdam', 'Paris', 'Berlin'], new Date(), 1000 * 60 * 60)
+  API.updateGrowthNumbers(['Amsterdam', 'Paris', 'Berlin'], new Date(), getCurrentTimeframeSpan())
+}
+
+function parseGrowthNumbersToClientReadibleObject(growthNumbers) {
+  var object = {paranoiaChange:[]};
+  object.paranoiaChange.push({
+    interval: getCurrentTimeframeSpan(),
+    locations: parseLocationDataFromGrowthNumbers(growthNumbers)
+  })
+  return object
+}
+
+function parseLocationDataFromGrowthNumbers(growthNumbers) {
+  var locationNames = Object.keys(growthNumbers)
+  return locationNames.map(function(locationName) {
+    return {
+      name: locationName,
+      change: growthNumbers[locationName]
+    }
+  })
+}
+
+function getCurrentTimeframeSpan() {
+  return 1000 * 60 * 60
 }

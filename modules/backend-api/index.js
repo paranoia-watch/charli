@@ -46,9 +46,9 @@ function BackendAPI (backend, dbsettings) {
   api.updateGrowthNumbers = function(locations, startDate, timeframeSpan) {
     backend.getTimeframeToTimeframeGrowth(locations, startDate, timeframeSpan, function(error, growthNumbers) {
       if(error) {
-        return api.emit('growth-update-error', error)
+        return api.emit('paranoia-update-error', error)
       }
-      api.emit('growth-updated', growthNumbers)
+      api.emit('paranoia-updated', growthNumbers)
     })
   }
 
