@@ -5,8 +5,17 @@
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  */
 
-var argv = require('minimist')(process.argv.slice(2)),
-  parser = require('./lib/parser')
+var argv = require('minimist')(process.argv.slice(2))
+var parseFile = require('./lib/parser')
+var getFile = require('./lib/file')
+
 global.INPUT_FILE = argv.I
 
-exports.getData = parser
+function getData (callback) {
+  getFile(function (fileContents) {
+    var data = parseFile(fileContents)
+    callback(data)
+  })
+}
+
+exports.getData = getData

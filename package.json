@@ -17,6 +17,7 @@
     "url": "https://github.com/bvhme/fear-index/issues"
   },
   "dependencies": {
+    "async": "^1.5.2",
     "dotenv": "^1.2.0",
     "express": "^4.12.4",
     "mongoose": "^4.0.3",

@@ -7,13 +7,11 @@
 
 var getFile = require('./file')
 
-function main (callback) {
-  getFile(function (fileData) {
-    var fieldNames = parseFieldNamesFromFileData(fileData)
-    var rowsData = parseDataRowsFromFileData(fileData)
-    var data = parseObjectFromRowsDataAndFieldNames(rowsData, fieldNames)
-    if (callback) callback(data)
-  })
+function main (fileData) {
+  var fieldNames = parseFieldNamesFromFileData(fileData)
+  var rowsData = parseDataRowsFromFileData(fileData)
+  var data = parseObjectFromRowsDataAndFieldNames(rowsData, fieldNames)
+  return data
 }
 
 function parseFieldNamesFromFileData (fileData) {
@@ -37,14 +35,10 @@ function parseSingleObjectFromRowDataAndFieldNames (rowData, fieldNames) {
   var cellValues = getCellValuesByRowData(rowData)
   if (fieldNames.length !== cellValues.length) return console.error('number of field names (' + fieldNames.length + ") doesn't match the number of cell values (" + cellValues.length + ')')
   for (var i in fieldNames) {
-    object[fieldNames[i]] = parseCellValueByRawValueAndColumnIndex(cellValues[i], i)
+    if (i == 0) object.date = parseCellDateStringToDate(cellValues[i])
+    else object[fieldNames[i]] = getAverageByRawCellValue(cellValues[i])
   }
   return object
-}
-
-function parseCellValueByRawValueAndColumnIndex (rawValue, columnIndex) {
-  if (columnIndex == 0) return parseCellDateStringToDate(rawValue)
-  return getAverageByRawCellValue(rawValue)
 }
 
 function parseCellDateStringToDate (cellDateString) {
@@ -63,7 +57,7 @@ function getAverageByRawCellValue (cellValue) {
 }
 
 function getNumberOfComponentsByCellValue (cellValue) {
-  return cellValue.split(/;/g)[0].length
+  return cellValue.split(/;/g).length
 }
 
 function parseCellValueFormulaToNumber (cellValue) {

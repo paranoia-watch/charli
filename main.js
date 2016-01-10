@@ -1,5 +1,3 @@
-require('dotenv').config({silent: true})
-
 var settings = require('./settings.js')
 
 var twitterTracker = new require('./modules/twitter-tracker.js')(settings.twitterTracker)
@@ -15,7 +13,7 @@ if (db) {
 
 if (twitterTracker) {
   twitterTracker.on('tweet', function (tweet) {
-    if(createIndex) createIndex.addTweet(tweet)
+    if (createIndex) createIndex.addTweet(tweet)
   })
 
   twitterTracker.on('limit', function (message) {
@@ -44,7 +42,7 @@ if (twitterTracker) {
 if (createIndex) {
   createIndex.on('index-changed', function (newIndex) {
     console.log('The index is changed to: ', newIndex)
-    if(server) server.emit('broadcast-index', newIndex)
+    if (server) server.emit('broadcast-index', newIndex)
   })
 
   createIndex.on('tweet-added', function (record, index) {
