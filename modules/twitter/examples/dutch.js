@@ -17,8 +17,8 @@ publisher.on('publication', function(tweet) {
     console.log(tweet)
 })
 
-publisher.on('connect', function(statusMessage) {
-    console.log('connected!', statusMessage)
+publisher.on('connect', function() {
+    console.log('connected!')
 })
 
 publisher.on('connection-error', function(error) {

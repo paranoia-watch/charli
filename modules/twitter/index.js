@@ -39,7 +39,7 @@ function getPublicationStream(searchTerms) {
 
     twitterTrack.on('tweet', function(tweet) {
       var publication = parseTweet(tweet)
-      publicationStream.emit('publication', publication)
+      if(publication) publicationStream.emit('publication', publication)
     })
 
     return publicationStream
