@@ -12,13 +12,7 @@ API.on('backend-connected', function () {
   var trackingTerms = settings.getTrackingTermsAsFlatArray()
   console.info('API backend connected, you can now read from and write to it :)')
   API.collectPublications(settings, trackingTerms)
-
-  getGrowthNumbers(function (error, growth) {
-    if (error) {
-      return console.error(error)
-    }
-    console.info('Growth numbers = ', JSON.stringify(growth))
-  })
+  getGrowthNumbers()
 })
 
 API.on('backend-connection-error', function (error) {
@@ -40,18 +34,21 @@ API.on('publication-collected', function (publication) {
 
 API.on('publication-saved', function () {
   console.info('API saved a publication\n')
-  getGrowthNumbers(function (error, growth) {
-    if (error) {
-      return console.error(error)
-    }
-    console.info('Growth numbers = ', JSON.stringify(growth))
-  })
+  getGrowthNumbers()
 })
 
 API.on('publication-save-error', function (error) {
   console.error('API failed to save a publication\nbackend says: ' + error + '\n')
 })
 
-function getGrowthNumbers (callback) {
-  API.getTimeframeToTimeframeGrowth(['Amsterdam', 'Paris', 'Berlin'], new Date(), 1000 * 60 * 60, callback)
+API.on('growth-updated', function (growthNumbers) {
+  console.info('API updated growth numbers', growthNumbers)
+})
+
+API.on('growth-update-error', function (error) {
+  console.error('API failed to update growth numbers\nbackend says: ' + error + '\n')
+})
+
+function getGrowthNumbers () {
+  API.updateGrowthNumbers(['Amsterdam', 'Paris', 'Berlin'], new Date(), 1000 * 60 * 60)
 }
