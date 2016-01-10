@@ -26,35 +26,36 @@ function BackendAPI (backend, dbsettings) {
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
 
-  api.processPublications = function (settings) {
-    return processPublications(settings, backend)
+  api.collectPublications = function (settings) {
+    return collectPublications(api, settings)
+  }
+
+  api.savePublication = function (publication) {
+    backend.savePublication(publication, function (error) {
+      if (error)
+        return api.emit('publication-save-error', error)
+      api.emit('publication-saved')
+    })
   }
 
   return api
 }
 
-function processPublications (settings, backend) {
-  var publications = new events.EventEmitter()
+function collectPublications (api, settings) {
+  collectTwitterPublications(api, settings.twitter)
+}
 
-  var twitterPublications = new twitter.publisher(settings.twitter, ['aanslag', 'vvd', 'schaatsen', 'kramer', 'politiek'])
-
-  // twitterPublications.on('connection-error', function (error) {
-  //   console.log('error!', error)
-  // })
-
-  // twitterPublications.on('connect', function () {
-  //   console.log('connection!')
-  // })
-
-  twitterPublications.on('publication', function (publication) {
-    publications.emit('publication', publication)
-    backend.savePublication(publication, function (error) {
-      if (error) return publications.emit('save-error', error)
-      publications.emit('save', publication)
-    })
+function collectTwitterPublications (api, twitterSettings) {
+  var twitterPublications = new twitter.publisher(twitterSettings, ['aanslag', 'vvd', 'schaatsen', 'kramer', 'politiek']) // todo
+  twitterPublications.on('connection-error', function (error) {
+    api.emit('collection-connection-error', error)
   })
-
-  return publications
+  twitterPublications.on('connect', function () {
+    api.emit('collection-connection', 'twitter')
+  })
+  twitterPublications.on('publication', function (publication) {
+    api.emit('publication-collected', publication)
+  })
 }
 
 function shutdown (message) {

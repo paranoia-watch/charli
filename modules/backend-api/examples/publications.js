@@ -14,20 +14,18 @@ API.on('connection-error', function (error) {
 })
 
 API.on('connected', function (error) {
-  console.log('API connected to backend!')
+  var publicationProcessor = API.collectPublications(settings)
+})
 
-  var publicationProcessor = API.processPublications(settings)
+API.on('publication-collected', function (publication) {
+  console.log('\na publication was collected!', publication)
+  API.savePublication(publication)
+})
 
-  publicationProcessor.on('publication', function (publication) {
-    console.log('\na publication was added!')
-  })
+API.on('publication-saved', function () {
+  console.log('\na publication was saved!')
+})
 
-  publicationProcessor.on('save', function (publication) {
-    console.log('\na publication was saved!', publication)
-  })
-
-  publicationProcessor.on('save-error', function (error) {
-    console.log("\na publication couldn't be saved!", error)
-  })
-
+API.on('publication-save-error', function (error) {
+  console.log("\na publication couldn't be saved!", error)
 })
