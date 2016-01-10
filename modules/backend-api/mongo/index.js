@@ -48,9 +48,13 @@ function getTimeframeToTimeframeGrowth(locations, date, timeframeSpan, callback)
   
   locations.map(function(location) {
     getTimeframeToTimeframeGrowthByLocation(location, date, timeframeSpan, function(error, growth) {
-      if(error) return callback(error)
+      if(error) {
+        return callback(error)
+      }
       growthNumbers[location] = growth
-      if(Object.keys(growthNumbers).length == numberOfLocations) return callback(null, growthNumbers)
+      if(Object.keys(growthNumbers).length == numberOfLocations) {
+        return callback(null, growthNumbers)
+      }
     })
   })
 }
@@ -65,15 +69,23 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
   var earlistTimeframeResult = 0
 
   getCumulativePublicationsWeightByLocation(location, latestTimeframeStartDate, latestTimeframeEndDate, function (error, weight) {
-    if (error) return callback(error)
+    if (error) {
+      return callback(error)
+    }
     latestTimeframeResult = weight
-    if (earlistTimeframeResult) return callback(null, latestTimeframeResult / earlistTimeframeResult)
+    if (earlistTimeframeResult) {
+      return callback(null, latestTimeframeResult / earlistTimeframeResult)
+    }
   })
 
   getCumulativePublicationsWeightByLocation(location, earliestTimeframeStartDate, earliestTimeframeEndDate, function (error, weight) {
-    if (error) return callback(error)
+    if (error) {
+      return callback(error)
+    }
     earlistTimeframeResult = weight
-    if (latestTimeframeResult) return callback(null, latestTimeframeResult / earlistTimeframeResult)
+    if (latestTimeframeResult) {
+      return callback(null, latestTimeframeResult / earlistTimeframeResult)
+    }
   })
 
 }
@@ -95,8 +107,12 @@ function getCumulativePublicationsWeightByLocation (location, startDate, endDate
       }
     }
   }], function (error, result) {
-    if (error) return callback(error)
-    if (!result[0] || !result[0].weight) return callback(null, 0)
+    if (error) {
+      return callback(error)
+    }
+    if (!result[0] || !result[0].weight) {
+      return callback(null, 0)
+    }
     callback(null, result[0].weight)
   })
 }

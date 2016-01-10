@@ -13,14 +13,18 @@ function BackendAPI (backend, dbsettings) {
   var api = new events.EventEmitter()
   var backend = require('./' + backend)
 
-  if (dbsettings.disabled)
+  if (dbsettings.disabled) {
     return shutdown('The database is disabled in the settings')
+  }
 
-  if (!dbsettings.uri)
+  if (!dbsettings.uri) {
     return shutdown('No database URI specified')
+  }
 
   backend.connect(dbsettings, function (error) {
-    if (error) return api.emit('backend-connection-error', err, res)
+    if (error) {
+      return api.emit('backend-connection-error', err, res)
+    }
     api.emit('backend-connected')
   })
 
@@ -32,8 +36,9 @@ function BackendAPI (backend, dbsettings) {
 
   api.savePublication = function (publication) {
     backend.savePublication(publication, function (error) {
-      if (error)
+      if (error) {
         return api.emit('publication-save-error', error)
+      }
       api.emit('publication-saved')
     })
   }

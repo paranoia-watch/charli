@@ -14,6 +14,7 @@ var Broadcaster = function (settings) {
   var broadcaster = new events.EventEmitter()
   var httpServer = http.createServer()
   var socketServer = socketio(httpServer)
+  var internalAffairs = new events.EventEmitter()
 
   if (settings.disabled) {
     return broadcaster.emit('disabled')
@@ -26,6 +27,16 @@ var Broadcaster = function (settings) {
   var listenToSockets = function () {
     socketServer.sockets.on('connection', function (socket) {
       broadcaster.emit('client-connected')
+      internalAffairs.on('broadcast', function (affair) {
+        socket.emit(affair.eventName, affair.payload);
+      })
+    })
+  }
+
+  broadcaster.broadcast = function (eventName, payload) {
+    internalAffairs.emit('broadcast', {
+      eventName: eventName,
+      payload: payload
     })
   }
 

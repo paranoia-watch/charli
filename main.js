@@ -51,7 +51,8 @@ API.on('publication-save-error', function (error) {
 })
 
 API.on('growth-updated', function (growthNumbers) {
-  console.info('API updated growth numbers', growthNumbers)
+  console.info('broadcasting growth numbers', growthNumbers)
+  broadcaster.broadcast('growth-updated', growthNumbers)
 })
 
 API.on('growth-update-error', function (error) {
