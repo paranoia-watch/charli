@@ -6,7 +6,7 @@ settings.backend = process.env.BACKEND || 'mongo'
 
 // Process
 settings.server = {
-  port: process.env.SERVERPORT || 8080,
+  port: process.env.PORT || 8080,
   disabled: process.env.SERVERDISABLED || false
 }
 
