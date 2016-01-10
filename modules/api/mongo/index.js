@@ -1,6 +1,6 @@
 /*
  * @package charli
- * @subpackage backend
+ * @subpackage api
  * @copyright Copyright(c) 2016 Paranoia Watch
  * @author Boris van Hoytema <boris AT newatoms DOT com>
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
