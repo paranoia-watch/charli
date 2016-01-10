@@ -8,17 +8,17 @@
 require('dotenv').config({silent: true, path: '../.env'})
 global.settings = require('../../settings.js')
 
-var argv = require('minimist')(process.argv.slice(2)),
-  parser = require('./lib/parser'),
-  backend = require('../backend/index')
+var argv = require('minimist')(process.argv.slice(2))
+var parseFile = require('./lib/parser')
+var getFile = require('./lib/file')
+
 global.INPUT_FILE = argv.I
 
-function processData (callback) {
-  var Backend = new backend()
-  parser(function (data) {
-    Backend.processPeilingwijzerData(callback || function () {})
+function getData (callback) {
+  getFile(function (fileContents) {
+    var data = parseFile(fileContents)
+    callback(data)
   })
 }
 
 exports.getData = parser
-exports.processData = processData

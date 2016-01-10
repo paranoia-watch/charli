@@ -6,9 +6,9 @@
  * @author Wouter Vroeee <wouter AT woutervroege DOT nl>
  */
 
-function TweetParser(tweet) {
+function TweetParser (tweet) {
   var location = parsePublisherLocation(tweet.user.time_zone, tweet.user.location)
-  if(!location) return false
+  if (!location) return false
   return {
     medium: 'twitter',
     mediumPublicationId: tweet.id,
@@ -18,17 +18,17 @@ function TweetParser(tweet) {
   }
 }
 
-function getPublicationWeight(tweet) {
+function getPublicationWeight (tweet) {
   var followerCount = tweet.user.followers_count
   return (followerCount / 650000000) * 1000000
 }
 
-function parsePublisherLocation(userTimezone, userLocation) {
-  if(!userTimezone) userTimezone = ""
-  if(!userLocation) userLocation = ""
-  if(userTimezone.match(/amsterdam/i) || userLocation.match(/amsterdam/i)) return "Amsterdam"
-  if(userTimezone.match(/berlin/i) || userLocation.match(/berlin/i)) return "Berlin"
-  if(userTimezone.match(/paris/i) || userLocation.match(/paris/i)) return "Paris"
+function parsePublisherLocation (userTimezone, userLocation) {
+  if (!userTimezone) userTimezone = ''
+  if (!userLocation) userLocation = ''
+  if (userTimezone.match(/amsterdam/i) || userLocation.match(/amsterdam/i)) return 'Amsterdam'
+  if (userTimezone.match(/berlin/i) || userLocation.match(/berlin/i)) return 'Berlin'
+  if (userTimezone.match(/paris/i) || userLocation.match(/paris/i)) return 'Paris'
   return false
 }
 

@@ -41,40 +41,40 @@ var TwitterTracker = function (settings) {
     'access_token': settings.accessToken,
     'access_token_secret': settings.accessSecret
   }
-  
+
   var Twitter = new Twit(twitterAuthKeys)
   var twitterTracker = new events.EventEmitter()
-  
+
   stream = Twitter.stream('statuses/filter', {
     track: settings.terms
   })
-  
+
   stream.on('tweet', function (tweet) {
     twitterTracker.emit('tweet', tweet)
   })
-  
+
   stream.on('limit', function (message) {
     twitterTracker.emit('limit', message)
   })
-  
+
   stream.on('disconnect', function (message) {
     twitterTracker.emit('disconnect', message)
   })
-  
+
   stream.on('connect', function (request) {
     twitterTracker.emit('connect', request.statusMessage)
   })
-  
+
   stream.on('connected', function (request) {
     if (request.statusMessage !== 'OK')
       return twitterTracker.emit('connection-error', request.statusMessage)
     twitterTracker.emit('connected', request.statusMessage)
   })
-  
+
   stream.on('reconnect', function (request, response, connectInterval) {
     twitterTracker.emit('reconnect', request, response, connectInterval)
   })
-  
+
   stream.on('warning', function (message) {
     twitterTracker.emit('warning', message)
   })

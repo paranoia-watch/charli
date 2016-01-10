@@ -7,13 +7,11 @@
 
 var getFile = require('./file')
 
-function main (callback) {
-  getFile(function (fileData) {
-    var fieldNames = parseFieldNamesFromFileData(fileData)
-    var rowsData = parseDataRowsFromFileData(fileData)
-    var data = parseObjectFromRowsDataAndFieldNames(rowsData, fieldNames)
-    if (callback) callback(data)
-  })
+function main (fileData) {
+  var fieldNames = parseFieldNamesFromFileData(fileData)
+  var rowsData = parseDataRowsFromFileData(fileData)
+  var data = parseObjectFromRowsDataAndFieldNames(rowsData, fieldNames)
+  return data
 }
 
 function parseFieldNamesFromFileData (fileData) {
