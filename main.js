@@ -7,6 +7,15 @@
 
 var settings = require('./settings.js')
 var API = new require('./modules/backend-api/index.js')('mongo', settings.db)
+var broadcaster = new require('./modules/broadcaster.js')(settings.server)
+
+broadcaster.on('listening', function (port) {
+  console.info('Broadcaster is listening on port', port)
+})
+
+broadcaster.on('client-connected', function () {
+  console.info('Broadcaster was connected to by some client')
+})
 
 API.on('backend-connected', function () {
   var trackingTerms = settings.getTrackingTermsAsFlatArray()
