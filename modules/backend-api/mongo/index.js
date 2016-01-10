@@ -42,6 +42,82 @@ function savePublication (publication, callback) {
   model.save(callback)
 }
 
+function getTimeframeToTimeframeGrowth(locations, date, timeframeSpan, callback) {
+  var numberOfLocations = locations.length
+  var growthNumbers = {}
+  
+  locations.map(function(location) {
+    getTimeframeToTimeframeGrowthByLocation(location, date, timeframeSpan, function(error, growth) {
+      if(error) {
+        return callback(error)
+      }
+      growthNumbers[location] = growth
+      if(Object.keys(growthNumbers).length == numberOfLocations) {
+        return callback(null, growthNumbers)
+      }
+    })
+  })
+}
+
+function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan, callback) {
+  var latestTimeframeEndDate = date
+  var latestTimeframeStartDate = new Date(date.getTime() - timeframeSpan)
+  var latestTimeframeResult = 0
+
+  var earliestTimeframeEndDate = latestTimeframeStartDate
+  var earliestTimeframeStartDate = new Date(latestTimeframeStartDate.getTime() - timeframeSpan)
+  var earlistTimeframeResult = 0
+
+  getCumulativePublicationsWeightByLocation(location, latestTimeframeStartDate, latestTimeframeEndDate, function (error, weight) {
+    if (error) {
+      return callback(error)
+    }
+    latestTimeframeResult = weight
+    if (earlistTimeframeResult !== null) {
+      return callback(null, latestTimeframeResult / earlistTimeframeResult)
+    }
+  })
+
+  getCumulativePublicationsWeightByLocation(location, earliestTimeframeStartDate, earliestTimeframeEndDate, function (error, weight) {
+    if (error) {
+      return callback(error)
+    }
+    earlistTimeframeResult = weight
+    if (latestTimeframeResult !== null) {
+      return callback(null, latestTimeframeResult / earlistTimeframeResult)
+    }
+  })
+
+}
+
+function getCumulativePublicationsWeightByLocation (location, startDate, endDate, callback) {
+  PublicationModel.aggregate([{
+    $match: {
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      },
+      publisherLocation: location
+    }
+  }, {
+    $group: {
+      _id: '$trigger',
+      weight: {
+        $sum: '$weight'
+      }
+    }
+  }], function (error, result) {
+    if (error) {
+      return callback(error)
+    }
+    if (!result[0] || !result[0].weight) {
+      return callback(null, 0)
+    }
+    callback(null, result[0].weight)
+  })
+}
+
 exports.connect = connect
 exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
+exports.getTimeframeToTimeframeGrowth = getTimeframeToTimeframeGrowth

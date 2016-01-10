@@ -13,7 +13,7 @@ API.on('connection-error', function (error) {
   console.log('API connection error', error)
 })
 
-API.on('connected', function (error) {
+API.on('connected', function () {
   API.collectPublications(settings, ['Boris', 'Mark-Jan', 'Thomas', 'Wouter', 'Google'])
 })
 

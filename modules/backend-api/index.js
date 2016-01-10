@@ -13,15 +13,19 @@ function BackendAPI (backend, dbsettings) {
   var api = new events.EventEmitter()
   var backend = require('./' + backend)
 
-  if (dbsettings.disabled)
+  if (dbsettings.disabled) {
     return shutdown('The database is disabled in the settings')
+  }
 
-  if (!dbsettings.uri)
+  if (!dbsettings.uri) {
     return shutdown('No database URI specified')
+  }
 
   backend.connect(dbsettings, function (error) {
-    if (error) return api.emit('connection-error', err, res)
-    api.emit('connected')
+    if (error) {
+      return api.emit('backend-connection-error', err, res)
+    }
+    api.emit('backend-connected')
   })
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
@@ -32,9 +36,19 @@ function BackendAPI (backend, dbsettings) {
 
   api.savePublication = function (publication) {
     backend.savePublication(publication, function (error) {
-      if (error)
+      if (error) {
         return api.emit('publication-save-error', error)
+      }
       api.emit('publication-saved')
+    })
+  }
+
+  api.updateGrowthNumbers = function(locations, startDate, timeframeSpan) {
+    backend.getTimeframeToTimeframeGrowth(locations, startDate, timeframeSpan, function(error, growthNumbers) {
+      if(error) {
+        return api.emit('paranoia-update-error', error)
+      }
+      api.emit('paranoia-updated', growthNumbers)
     })
   }
 
@@ -46,12 +60,16 @@ function collectPublications (api, settings, trackingTerms) {
 }
 
 function collectTwitterPublications (api, twitterSettings, trackingTerms) {
-  var twitterPublications = new twitter.publisher(twitterSettings, trackingTerms) // todo
+  var mediumName = 'twitter'
+  var twitterPublications = new twitter.publisher(twitterSettings, trackingTerms)
   twitterPublications.on('connection-error', function (error) {
-    api.emit('collection-connection-error', error)
+    api.emit('collection-connection-error', {
+      medium: mediumName,
+      error: error
+    })
   })
   twitterPublications.on('connect', function () {
-    api.emit('collection-connection', 'twitter')
+    api.emit('collection-connected', mediumName)
   })
   twitterPublications.on('publication', function (publication) {
     api.emit('publication-collected', publication)

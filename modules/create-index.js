@@ -61,6 +61,7 @@ var CreateIndex = function (settings, db) {
         }
       }
     }], function (err, result) {
+      console.log(err, result)
       if (err || !result[0]) {
         console.error('calculateIndexFromDatabase', err, result)
         return createIndex.emit('calculate-index-from-database-error', err, result)
