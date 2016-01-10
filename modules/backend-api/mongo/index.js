@@ -73,7 +73,7 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
       return callback(error)
     }
     latestTimeframeResult = weight
-    if (earlistTimeframeResult) {
+    if (earlistTimeframeResult !== null) {
       return callback(null, latestTimeframeResult / earlistTimeframeResult)
     }
   })
@@ -83,7 +83,7 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
       return callback(error)
     }
     earlistTimeframeResult = weight
-    if (latestTimeframeResult) {
+    if (latestTimeframeResult !== null) {
       return callback(null, latestTimeframeResult / earlistTimeframeResult)
     }
   })
