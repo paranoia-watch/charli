@@ -1,3 +1,5 @@
+require('dotenv').config({silent: true})
+
 var settings = {}
 
 settings.backend = process.env.BACKEND || 'mongo'
@@ -17,7 +19,7 @@ settings.db = {
 }
 
 // Streams
-settings.twitterTracker = {
+settings.twitter = {
   consumerKey: process.env.TWITTERCONSUMERKEY,
   consumerSecret: process.env.TWITTERCONSUMERSECRET,
   accessToken: process.env.TWITTERACCESSTOKEN,

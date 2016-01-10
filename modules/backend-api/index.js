@@ -6,49 +6,50 @@
  * @author Wouter Vroege <wouter AT woutervroege DOT nl>
  */
 
-global.dbsettings = global.settings.db
-var backend = require('./' + settings.backend)
 var twitter = require('../twitter')
 var events = require('events')
 
-function API () {
+function BackendAPI (backend, dbsettings) {
   var api = new events.EventEmitter()
+  var backend = require('./' + backend)
 
   if (dbsettings.disabled)
     return shutdown('The database is disabled in the settings')
-  
+
   if (!dbsettings.uri)
     return shutdown('No database URI specified')
 
-  backend.connect(function (error) {
+  backend.connect(dbsettings, function (error) {
     if (error) return api.emit('connection-error', err, res)
     api.emit('connected')
   })
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
-  
-  api.processPublications = processPublications
+
+  api.processPublications = function (settings) {
+    return processPublications(settings, backend)
+  }
 
   return api
 }
 
-function processPublications() {
+function processPublications (settings, backend) {
   var publications = new events.EventEmitter()
 
-  var twitterPublications = new twitter.publisher(['aanslag', 'vvd', 'schaatsen', 'kramer', 'politiek']);
+  var twitterPublications = new twitter.publisher(settings.twitter, ['aanslag', 'vvd', 'schaatsen', 'kramer', 'politiek'])
 
-  twitterPublications.on('connection-error', function (error) {
-    console.log("error!", error)
-  })
+  // twitterPublications.on('connection-error', function (error) {
+  //   console.log('error!', error)
+  // })
 
-  twitterPublications.on('connect', function () {
-    console.log("connection!")
-  })
+  // twitterPublications.on('connect', function () {
+  //   console.log('connection!')
+  // })
 
   twitterPublications.on('publication', function (publication) {
     publications.emit('publication', publication)
-    backend.savePublication(publication, function(error) {
-      if(error) return publications.emit('save-error', error)
+    backend.savePublication(publication, function (error) {
+      if (error) return publications.emit('save-error', error)
       publications.emit('save', publication)
     })
   })
@@ -61,4 +62,4 @@ function shutdown (message) {
   process.exit()
 }
 
-module.exports = API
+module.exports = BackendAPI

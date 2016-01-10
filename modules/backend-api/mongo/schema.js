@@ -9,7 +9,7 @@
 var mongoose = require('mongoose')
 
 function getPublicationModel () {
-  return mongoose.model('Index', getPublicationSchema())
+  return mongoose.model('Publication', getPublicationSchema())
 }
 
 function getPeilingwijzerModel () {

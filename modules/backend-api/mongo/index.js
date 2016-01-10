@@ -13,7 +13,7 @@ var peilingwijzer = require('../../peilingwijzer/index')
 var PeilingwijzerModel = schemas.createPeilingwijzerModel()
 var PublicationModel = schemas.createPublicationModel()
 
-function connect (callback) {
+function connect (dbsettings, callback) {
   mongoose.connect(dbsettings.uri, function (error, data) {
     if (error) return callback(error)
     callback(null, data)
@@ -37,7 +37,7 @@ function savePeilingwijzerData (data, callback) {
   })
 }
 
-function savePublication(publication, callback) {
+function savePublication (publication, callback) {
   var model = new PublicationModel(publication)
   model.save(callback)
 }

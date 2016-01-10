@@ -1,5 +1,3 @@
-require('dotenv').config({silent: true})
-
 var settings = require('./settings.js')
 
 var twitterTracker = new require('./modules/twitter-tracker.js')(settings.twitterTracker)

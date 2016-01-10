@@ -7,26 +7,25 @@
 
 var tracker = require('./lib/tracker')
 var parseTweet = require('./lib/tweet-parser')
-var settings = global.settings.twitterTracker
 var events = require('events')
 
-function trackStream (termsArray) {
-  if (settings.disabled)
+function trackStream (twitterSettings, termsArray) {
+  if (twitterSettings.disabled)
     return shutdown('Twitter tracking is disabled in the settings')
 
   var streamTracker = new tracker({
     terms: termsArray,
-    consumerKey: settings.consumerKey,
-    consumerSecret: settings.consumerSecret,
-    accessToken: settings.accessToken,
-    accessSecret: settings.accessSecret
+    consumerKey: twitterSettings.consumerKey,
+    consumerSecret: twitterSettings.consumerSecret,
+    accessToken: twitterSettings.accessToken,
+    accessSecret: twitterSettings.accessSecret
   })
   return streamTracker
 }
 
-function getPublicationStream (searchTerms) {
+function getPublicationStream (twitterSettings, searchTerms) {
   var publicationStream = new events.EventEmitter()
-  var twitterTrack = trackStream(searchTerms)
+  var twitterTrack = trackStream(twitterSettings, searchTerms)
 
   twitterTrack.on('connect', function (statusMessage) {
     publicationStream.emit('connect', statusMessage)
