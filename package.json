@@ -1,21 +1,14 @@
 {
-  "name": "fear-index",
+  "name": "charli",
   "version": "1.1.0",
   "description": "How afraid are we?",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bvhme/fear-index.git"
+    "start": "node index.js"
   },
   "author": "Boris van Hoytema",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bvhme/fear-index/issues"
-  },
   "dependencies": {
     "async": "^1.5.2",
     "dotenv": "^1.2.0",
