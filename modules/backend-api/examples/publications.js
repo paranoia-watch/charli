@@ -14,7 +14,7 @@ API.on('connection-error', function (error) {
 })
 
 API.on('connected', function (error) {
-  var publicationProcessor = API.collectPublications(settings)
+  API.collectPublications(settings, ['Boris', 'Mark-Jan', 'Thomas', 'Wouter', 'Google'])
 })
 
 API.on('publication-collected', function (publication) {

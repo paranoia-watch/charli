@@ -26,8 +26,8 @@ function BackendAPI (backend, dbsettings) {
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
 
-  api.collectPublications = function (settings) {
-    return collectPublications(api, settings)
+  api.collectPublications = function (settings, trackingTerms) {
+    return collectPublications(api, settings, trackingTerms)
   }
 
   api.savePublication = function (publication) {
@@ -41,12 +41,12 @@ function BackendAPI (backend, dbsettings) {
   return api
 }
 
-function collectPublications (api, settings) {
-  collectTwitterPublications(api, settings.twitter)
+function collectPublications (api, settings, trackingTerms) {
+  collectTwitterPublications(api, settings.twitter, trackingTerms)
 }
 
-function collectTwitterPublications (api, twitterSettings) {
-  var twitterPublications = new twitter.publisher(twitterSettings, ['aanslag', 'vvd', 'schaatsen', 'kramer', 'politiek']) // todo
+function collectTwitterPublications (api, twitterSettings, trackingTerms) {
+  var twitterPublications = new twitter.publisher(twitterSettings, trackingTerms) // todo
   twitterPublications.on('connection-error', function (error) {
     api.emit('collection-connection-error', error)
   })

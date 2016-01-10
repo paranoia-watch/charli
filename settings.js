@@ -24,9 +24,10 @@ settings.twitter = {
   consumerSecret: process.env.TWITTERCONSUMERSECRET,
   accessToken: process.env.TWITTERACCESSTOKEN,
   accessSecret: process.env.TWITTERACCESSSECRET,
-  track: process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json'),
   disabled: process.env.TWITTERDISABLED || false
 }
+
+settings.trackingTerms = process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json')
 
 // Index
 settings.createIndex = {
