@@ -42,32 +42,20 @@ function savePublication (publication, callback) {
   model.save(callback)
 }
 
-function getCumulativePublicationsWeightByLocation (location, startDate, endDate, callback) {
-  PublicationModel.aggregate([{
-    $match: {
-      date: {
-        $gte: startDate,
-        $lte: endDate
-      },
-      publisherLocation: location
-    }
-  }, {
-    $group: {
-      _id: '$trigger',
-      weight: {
-        $sum: '$weight'
-      }
-    }
-  }], function (error, result) {
-    if (error) return callback(error)
-    if (!result[0] || !result[0].weight) return callback('Unable to calculate cumulative weight')
-    callback(null, result[0].weight)
+function getTimeframeToTimeframeGrowth(locations, date, timeframeSpan, callback) {
+  var numberOfLocations = locations.length
+  var growthNumbers = {}
+  
+  locations.map(function(location) {
+    getTimeframeToTimeframeGrowthByLocation(location, date, timeframeSpan, function(error, growth) {
+      if(error) return callback(error)
+      growthNumbers[location] = growth
+      if(Object.keys(growthNumbers).length == numberOfLocations) return callback(null, growthNumbers)
+    })
   })
 }
 
 function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan, callback) {
-  console.log('getTimeframeToTimeframeGrowthByLocation')
-
   var latestTimeframeEndDate = date
   var latestTimeframeStartDate = new Date(date.getTime() - timeframeSpan)
   var latestTimeframeResult = 0
@@ -90,7 +78,30 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
 
 }
 
+function getCumulativePublicationsWeightByLocation (location, startDate, endDate, callback) {
+  PublicationModel.aggregate([{
+    $match: {
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      },
+      publisherLocation: location
+    }
+  }, {
+    $group: {
+      _id: '$trigger',
+      weight: {
+        $sum: '$weight'
+      }
+    }
+  }], function (error, result) {
+    if (error) return callback(error)
+    if (!result[0] || !result[0].weight) return callback(null, 0)
+    callback(null, result[0].weight)
+  })
+}
+
 exports.connect = connect
 exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
-exports.getTimeframeToTimeframeGrowthByLocation = getTimeframeToTimeframeGrowthByLocation
+exports.getTimeframeToTimeframeGrowth = getTimeframeToTimeframeGrowth
