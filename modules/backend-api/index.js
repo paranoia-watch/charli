@@ -20,8 +20,8 @@ function BackendAPI (backend, dbsettings) {
     return shutdown('No database URI specified')
 
   backend.connect(dbsettings, function (error) {
-    if (error) return api.emit('connection-error', err, res)
-    api.emit('connected')
+    if (error) return api.emit('backend-connection-error', err, res)
+    api.emit('backend-connected')
   })
 
   api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
@@ -46,12 +46,16 @@ function collectPublications (api, settings, trackingTerms) {
 }
 
 function collectTwitterPublications (api, twitterSettings, trackingTerms) {
-  var twitterPublications = new twitter.publisher(twitterSettings, trackingTerms) // todo
+  var mediumName = 'twitter'
+  var twitterPublications = new twitter.publisher(twitterSettings, trackingTerms)
   twitterPublications.on('connection-error', function (error) {
-    api.emit('collection-connection-error', error)
+    api.emit('collection-connection-error', {
+      medium: mediumName,
+      error: error
+    })
   })
   twitterPublications.on('connect', function () {
-    api.emit('collection-connection', 'twitter')
+    api.emit('collection-connected', mediumName)
   })
   twitterPublications.on('publication', function (publication) {
     api.emit('publication-collected', publication)

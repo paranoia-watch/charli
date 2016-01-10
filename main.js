@@ -8,16 +8,26 @@
 var settings = require('./settings.js')
 var API = new require('./modules/backend-api/index.js')('mongo', settings.db)
 
-API.on('connected', function () {
+API.on('backend-connected', function () {
   var trackingTerms = settings.getTrackingTermsAsFlatArray()
-  console.info('API connected, tracking ' + trackingTerms)
+  console.info('API backend connected, you can now read from and write to it :)')
   API.collectPublications(settings, trackingTerms)
 })
 
-API.on('connection-error', function (error) {
-  console.error('API connection error', error)
+API.on('backend-connection-error', function (error) {
+  console.error('API backend connection error', error)
 })
+
+API.on('collection-connected', function (medium) {
+  console.info('API connected to collection ' + medium)
+})
+
+API.on('collection-connection-error', function (feedback) {
+  console.error('API collection connection error for medium ' + feedback.medium + '\ncollection connection says: ' + feedback.error + '\n')
+})
+
 
 API.on('publication-collected', function (publication) {
   console.info('API collected a publication', publication, '\n')
 })
+
