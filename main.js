@@ -8,3 +8,12 @@
 var settings = require('./settings.js')
 var API = new require('./modules/backend-api/index.js')('mongo', settings.db)
 
+API.on('connected', function () {
+  var trackingTerms = settings.getTrackingTermsAsFlatArray()
+  console.info('API connected, tracking ' + trackingTerms)
+  API.collectPublications(settings, trackingTerms)
+})
+
+API.on('connection-error', function (error) {
+  console.error('API connection error', error)
+})
