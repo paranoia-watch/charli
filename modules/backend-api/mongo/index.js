@@ -42,6 +42,26 @@ function savePublication (publication, callback) {
   model.save(callback)
 }
 
+function getCumulativePublicationsWeight (location, startDate, endDate, callback) {
+  PublicationModel.aggregate([{
+      $match: {
+        date: {
+          $gte: startDate,
+          $lte: endDate
+        },
+        publisherLocation: location
+      }
+    }, {
+      $group: {
+        _id: '$trigger',
+        weight: {
+          $sum: '$weight'
+        }
+      }
+    }], callback)
+}
+
 exports.connect = connect
 exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
+exports.getCumulativePublicationsWeight = getCumulativePublicationsWeight
