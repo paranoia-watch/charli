@@ -78,9 +78,13 @@ function parseLocationDataFromGrowthNumbers (growthNumbers) {
   return locationNames.map(function (locationName) {
     return {
       name: locationName,
-      change: growthNumbers[locationName]
+      change: parseFractionToGrowthPercentage(growthNumbers[locationName])
     }
   })
+}
+
+function parseFractionToGrowthPercentage(fraction) {
+  return ((fraction * 100) - 100).toFixed(2)
 }
 
 function getCurrentTimeframeSpan () {
