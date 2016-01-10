@@ -38,6 +38,8 @@ function BackendAPI (backend, dbsettings) {
     })
   }
 
+  api.getTimeframeToTimeframeGrowthByLocation = backend.getTimeframeToTimeframeGrowthByLocation
+
   return api
 }
 

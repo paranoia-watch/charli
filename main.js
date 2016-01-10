@@ -12,6 +12,11 @@ API.on('backend-connected', function () {
   var trackingTerms = settings.getTrackingTermsAsFlatArray()
   console.info('API backend connected, you can now read from and write to it :)')
   API.collectPublications(settings, trackingTerms)
+
+  getParisIndex(function (error, growth) {
+    if (error) return console.error(error)
+    console.info('Paris growth = ', growth)
+  })
 })
 
 API.on('backend-connection-error', function (error) {
@@ -33,8 +38,16 @@ API.on('publication-collected', function (publication) {
 
 API.on('publication-saved', function () {
   console.info('API saved a publication\n')
+  getParisIndex(function (error, growth) {
+    if (error) return console.error(error)
+    console.info('Paris growth = ', growth)
+  })
 })
 
 API.on('publication-save-error', function (error) {
   console.error('API failed to save a publication\nbackend says: ' + error + '\n')
 })
+
+function getParisIndex (callback) {
+  API.getTimeframeToTimeframeGrowthByLocation('Paris', new Date(), 1000 * 60 * 60, callback)
+}

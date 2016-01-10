@@ -42,26 +42,55 @@ function savePublication (publication, callback) {
   model.save(callback)
 }
 
-function getCumulativePublicationsWeight (location, startDate, endDate, callback) {
+function getCumulativePublicationsWeightByLocation (location, startDate, endDate, callback) {
   PublicationModel.aggregate([{
-      $match: {
-        date: {
-          $gte: startDate,
-          $lte: endDate
-        },
-        publisherLocation: location
+    $match: {
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      },
+      publisherLocation: location
+    }
+  }, {
+    $group: {
+      _id: '$trigger',
+      weight: {
+        $sum: '$weight'
       }
-    }, {
-      $group: {
-        _id: '$trigger',
-        weight: {
-          $sum: '$weight'
-        }
-      }
-    }], callback)
+    }
+  }], function (error, result) {
+    if (error) return callback(error)
+    if (!result[0] || !result[0].weight) return callback('Unable to calculate cumulative weight')
+    callback(null, result[0].weight)
+  })
+}
+
+function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan, callback) {
+  console.log('getTimeframeToTimeframeGrowthByLocation')
+
+  var latestTimeframeEndDate = date
+  var latestTimeframeStartDate = new Date(date.getTime() - timeframeSpan)
+  var latestTimeframeResult = 0
+
+  var earliestTimeframeEndDate = latestTimeframeStartDate
+  var earliestTimeframeStartDate = new Date(latestTimeframeStartDate.getTime() - timeframeSpan)
+  var earlistTimeframeResult = 0
+
+  getCumulativePublicationsWeightByLocation(location, latestTimeframeStartDate, latestTimeframeEndDate, function (error, weight) {
+    if (error) return callback(error)
+    latestTimeframeResult = weight
+    if (earlistTimeframeResult) return callback(null, latestTimeframeResult / earlistTimeframeResult)
+  })
+
+  getCumulativePublicationsWeightByLocation(location, earliestTimeframeStartDate, earliestTimeframeEndDate, function (error, weight) {
+    if (error) return callback(error)
+    earlistTimeframeResult = weight
+    if (latestTimeframeResult) return callback(null, latestTimeframeResult / earlistTimeframeResult)
+  })
+
 }
 
 exports.connect = connect
 exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
-exports.getCumulativePublicationsWeight = getCumulativePublicationsWeight
+exports.getTimeframeToTimeframeGrowthByLocation = getTimeframeToTimeframeGrowthByLocation
