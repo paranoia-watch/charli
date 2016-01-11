@@ -14,14 +14,15 @@ var CACHE = {}
 setInterval(function () {
   var object = CACHE
   broadcaster.broadcast('paranoia-updated', object)
-}, 1000)
+}, 5000)
 
 broadcaster.on('listening', function (port) {
   console.info('Broadcaster is listening on port', port)
 })
 
-broadcaster.on('client-connected', function () {
+broadcaster.on('client-connected', function (socket) {
   console.info('Broadcaster was connected to by some client')
+  socket.emit('paranoia-updated', CACHE)
 })
 
 API.on('backend-connected', function () {
