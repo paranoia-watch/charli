@@ -11,7 +11,7 @@ var broadcaster = new require('./modules/broadcaster.js')(settings.server)
 
 var CACHE = {}
 
-setTimeout(function () {
+setInterval(function () {
   var object = CACHE
   broadcaster.broadcast('paranoia-updated', object)
 }, 1000)
