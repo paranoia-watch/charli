@@ -9,6 +9,13 @@ var settings = require('./settings.js')
 var API = new require('./modules/backend-api/index.js')('mongo', settings.db)
 var broadcaster = new require('./modules/broadcaster.js')(settings.server)
 
+var CACHE = {}
+
+setTimeout(function () {
+  var object = CACHE
+  broadcaster.broadcast('paranoia-updated', object)
+}, 1000)
+
 broadcaster.on('listening', function (port) {
   console.info('Broadcaster is listening on port', port)
 })
@@ -53,6 +60,7 @@ API.on('publication-save-error', function (error) {
 API.on('paranoia-updated', function (growthNumbers) {
   var object = parseGrowthNumbersToClientReadibleObject(growthNumbers)
   console.info('broadcasting paranoia', object)
+  CACHE = object
   broadcaster.broadcast('paranoia-updated', object)
 })
 
