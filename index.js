@@ -55,7 +55,7 @@ API.on('publication-save-error', function (error) {
 
 API.on('paranoia-updated', function (growthNumbers) {
   var object = parseGrowthNumbersToClientReadibleObject(growthNumbers)
-  console.info('broadcasting paranoia', object)
+  console.info('broadcasting paranoia', JSON.stringify(object))
   CACHE = object
   broadcaster.broadcast('paranoia-updated', object)
 })
@@ -88,7 +88,7 @@ function parseLocationDataFromGrowthNumbers (growthNumbers) {
 }
 
 function parseFractionToGrowthPercentage(fraction) {
-  return ((fraction * 100) - 100).toFixed(2)
+  return parseFloat(((fraction * 100) - 100).toFixed(2))
 }
 
 function getCurrentTimeframeSpan () {
