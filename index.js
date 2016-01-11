@@ -11,11 +11,6 @@ var broadcaster = new require('./modules/broadcaster.js')(settings.server)
 
 var CACHE = {}
 
-setInterval(function () {
-  var object = CACHE
-  broadcaster.broadcast('paranoia-updated', object)
-}, 5000)
-
 broadcaster.on('listening', function (port) {
   console.info('Broadcaster is listening on port', port)
 })
