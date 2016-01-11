@@ -62,11 +62,11 @@ function getTimeframeToTimeframeGrowth(locations, date, timeframeSpan, callback)
 function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan, callback) {
   var latestTimeframeEndDate = date
   var latestTimeframeStartDate = new Date(date.getTime() - timeframeSpan)
-  var latestTimeframeResult = 0
+  var latestTimeframeResult = null
 
   var earliestTimeframeEndDate = latestTimeframeStartDate
   var earliestTimeframeStartDate = new Date(latestTimeframeStartDate.getTime() - timeframeSpan)
-  var earlistTimeframeResult = 0
+  var earlistTimeframeResult = null
 
   getCumulativePublicationsWeightByLocation(location, latestTimeframeStartDate, latestTimeframeEndDate, function (error, weight) {
     if (error) {
