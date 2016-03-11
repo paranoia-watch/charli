@@ -117,6 +117,12 @@ function getCumulativePublicationsWeightByLocation (location, startDate, endDate
   })
 }
 
+process.on('SIGINT', function() {
+  mongoose.connection.close(function () {
+    process.exit(0);
+  });
+});
+
 exports.connect = connect
 exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
