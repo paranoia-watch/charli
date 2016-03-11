@@ -2,8 +2,8 @@
  * @package charli
  * @subpackage api
  * @copyright Copyright(c) 2016 Paranoia Watch
- * @author Boris Hendrik van Hoytema <boris AT newatoms DOT com>
- * @author Wouter Sahag Peter Vroege <wouter AT woutervroege DOT nl>
+ * @author Boris H van Hoytema <boris AT newatoms DOT com>
+ * @author Wouter S P Vroege <wouter AT woutervroege DOT nl>
  */
 
 var mongoose = require('mongoose')
@@ -14,7 +14,10 @@ var PeilingwijzerModel = schemas.createPeilingwijzerModel()
 var PublicationModel = schemas.createPublicationModel()
 
 function connect (dbsettings, callback) {
-  mongoose.connect(dbsettings.uri, function (error, data) {
+  mongoose.connect(dbsettings.uri, { server: { connectTimeoutMS: 3600000 } }, function (error, data) {
+    mongoose.connection.on('disconnected', function() {
+      connect(dbsettings, callback)
+    })
     if (error) return callback(error)
     callback(null, data)
   })
@@ -119,7 +122,7 @@ function getCumulativePublicationsWeightByLocation (location, startDate, endDate
 
 process.on('SIGINT', function() {
   mongoose.connection.close(function () {
-    process.exit(0);
+      process.exit(0);
   });
 });
 
