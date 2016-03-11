@@ -2,8 +2,8 @@
  * @package charli
  * @subpackage api
  * @copyright Copyright(c) 2016 Paranoia Watch
- * @author Boris H van Hoytema <boris AT newatoms DOT com>
- * @author Wouter S P Vroege <wouter AT woutervroege DOT nl>
+ * @author Boris Hendrik van Hoytema <boris AT newatoms DOT com>
+ * @author Wouter Sahag Peter Vroege <wouter AT woutervroege DOT nl>
  */
 
 var mongoose = require('mongoose')
