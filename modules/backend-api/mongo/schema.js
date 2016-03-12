@@ -23,7 +23,8 @@ function getPublicationSchema () {
     publisherLocation: String,
     date: Date,
     weight: Number,
-    collectionAverageAfterInsert: Number
+    collectionAverageAfterInsert: Number,
+    locationAverageAfterInsert: Number
   })
 }
 
