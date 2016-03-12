@@ -12,8 +12,8 @@ function connectionCallback(err) {
         var newCollectionAverageAfterInsert = calculateNewCollectionAverageAfterInsert(collectionAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord)
         
         addCollectionAverageAfterInsertToPublication(newRecord, newCollectionAverageAfterInsert, function (err, data) {
-          console.log(err, data)
-          
+          console.log(err, numberOfRecordsWithCollectionAverageAfterInsert, data.collectionAverageAfterInsert)
+          connectionCallback(null)
         })
       })
     })
@@ -36,7 +36,7 @@ function getCollectionAverageForPreviousPublication(callback) {
 }
 
 function getNumberOfRecordsWithCollectionAverageAfterInsert(callback) {
- PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).limit(-1).count(function(err, numberOfRecords) {
+ PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).count(function(err, numberOfRecords) {
    callback(err, numberOfRecords || 0)
  })
 }
