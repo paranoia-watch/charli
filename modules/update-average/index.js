@@ -1,7 +1,6 @@
 var mongoose = require('mongoose')
 var schemas = require('../backend-api/mongo/schema')
 var PublicationModel = schemas.createPublicationModel()
-var sequenceNumber = 0
 mongoose.connect('mongodb://paranoia:977KvtG^DXray.W^xaT97a3oFJiVYEJwA@db.paranoia.watch/paranoia', connectionCallback);
 
 function connectionCallback(err) {
@@ -23,4 +22,10 @@ function getCurrentAverageForPreviousPublication(callback) {
     if(!records || !records[0]) return callback(null, 0)
     callback(null, records[0].collectionAverageAfterInsert)
   })
+}
+
+function getNumberOfRecordsWithCollectionAverageAfterInsert(callback) {
+   PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).limit(-1).count(function(err, numberOfRecords) {
+     callback(err, numberOfRecords || 0)
+   })
 }
