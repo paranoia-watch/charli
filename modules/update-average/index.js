@@ -7,10 +7,14 @@ function connectionCallback(err) {
   if(err) return console.error(err);
   getSinglePublication(function(err, newRecord) {
     var weightOfNewRecord = newRecord.weight
-    getCurrentAverageForPreviousPublication(function (err, currentAverageForPreviousPublication) {
+    getCollectionAverageForPreviousPublication(function (err, collectionAverageForPreviousPublication) {
       getNumberOfRecordsWithCollectionAverageAfterInsert(function (err, numberOfRecordsWithCollectionAverageAfterInsert) {
-        var newCurrentAverageAfterInsert = calculateNewCurrentAverageAfterInsert(currentAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord)
-        console.log(newCurrentAverageAfterInsert)
+        var newCollectionAverageAfterInsert = calculateNewCollectionAverageAfterInsert(collectionAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord)
+        
+        addCollectionAverageAfterInsertToPublication(newRecord, newCollectionAverageAfterInsert, function (err, data) {
+          console.log(err, data)
+          
+        })
       })
     })
   })
@@ -23,7 +27,7 @@ function getSinglePublication(callback) {
   })
 }
 
-function getCurrentAverageForPreviousPublication(callback) {
+function getCollectionAverageForPreviousPublication(callback) {
   PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).sort({date: -1}).limit(1).exec(function(err, records) {
     if(err) return callback(err)
     if(!records || !records[0]) return callback(null, 0)
@@ -37,12 +41,17 @@ function getNumberOfRecordsWithCollectionAverageAfterInsert(callback) {
  })
 }
 
-function calculateNewCurrentAverageAfterInsert(currentAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord) {
-  var currentTotalWeight = (currentAverageForPreviousPublication * numberOfRecordsWithCollectionAverageAfterInsert)
+function calculateNewCollectionAverageAfterInsert(collectionAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord) {
+  var currentTotalWeight = (collectionAverageForPreviousPublication * numberOfRecordsWithCollectionAverageAfterInsert)
   var newTotalWeight = currentTotalWeight + weightOfNewRecord
   var newTotalRecords = numberOfRecordsWithCollectionAverageAfterInsert + 1
 
-  var newCurrentAverageAfterInsert = newTotalWeight / newTotalRecords
+  var newCollectionAverageAfterInsert = newTotalWeight / newTotalRecords
   
-  return newCurrentAverageAfterInsert
+  return newCollectionAverageAfterInsert
+}
+
+function addCollectionAverageAfterInsertToPublication (publication, collectionAverageAfterInsert, callback) {
+  publication.collectionAverageAfterInsert = collectionAverageAfterInsert
+  publication.save(callback)
 }
