@@ -5,7 +5,14 @@ mongoose.connect('mongodb://paranoia:977KvtG^DXray.W^xaT97a3oFJiVYEJwA@db.parano
 
 function connectionCallback(err) {
   if(err) return console.error(err);
-  getSinglePublication(function(err, data) {
+  getSinglePublication(function(err, newRecord) {
+    var weightOfNewRecord = newRecord.weight
+    getCurrentAverageForPreviousPublication(function (err, currentAverageForPreviousPublication) {
+      getNumberOfRecordsWithCollectionAverageAfterInsert(function (err, numberOfRecordsWithCollectionAverageAfterInsert) {
+        var newCurrentAverageAfterInsert = calculateNewCurrentAverageAfterInsert(currentAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord)
+        console.log(newCurrentAverageAfterInsert)
+      })
+    })
   })
 }
 
@@ -28,4 +35,14 @@ function getNumberOfRecordsWithCollectionAverageAfterInsert(callback) {
  PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).limit(-1).count(function(err, numberOfRecords) {
    callback(err, numberOfRecords || 0)
  })
+}
+
+function calculateNewCurrentAverageAfterInsert(currentAverageForPreviousPublication, numberOfRecordsWithCollectionAverageAfterInsert, weightOfNewRecord) {
+  var currentTotalWeight = (currentAverageForPreviousPublication * numberOfRecordsWithCollectionAverageAfterInsert)
+  var newTotalWeight = currentTotalWeight + weightOfNewRecord
+  var newTotalRecords = numberOfRecordsWithCollectionAverageAfterInsert + 1
+
+  var newCurrentAverageAfterInsert = newTotalWeight / newTotalRecords
+  
+  return newCurrentAverageAfterInsert
 }
