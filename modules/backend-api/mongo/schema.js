@@ -22,7 +22,8 @@ function getPublicationSchema () {
     mediumPublicationId: Number,
     publisherLocation: String,
     date: Date,
-    weight: Number
+    weight: Number,
+    collectionAverageAfterInsert: Number
   })
 }
 
