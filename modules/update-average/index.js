@@ -25,7 +25,7 @@ function getCurrentAverageForPreviousPublication(callback) {
 }
 
 function getNumberOfRecordsWithCollectionAverageAfterInsert(callback) {
-   PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).limit(-1).count(function(err, numberOfRecords) {
-     callback(err, numberOfRecords || 0)
-   })
+ PublicationModel.find({collectionAverageAfterInsert: {$exists: true}}).limit(-1).count(function(err, numberOfRecords) {
+   callback(err, numberOfRecords || 0)
+ })
 }
