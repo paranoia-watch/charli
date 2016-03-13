@@ -96,14 +96,16 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
 function getHistoricalData (locations, startDay, endDay, callback) {
   var historicalData = {}
   async.mapSeries(locations, function (location, aggregateCB) {
-    getLocationAveragesPerDay(location, startDay, endDay, function (err, data) {
+    getLocationAveragesPerDay(location, startDay, endDay, function (error, data) {
+      if (error) {
+        return callback(error)
+      }
       var locationData = parseLocationAggregrationResultToLocationData(data)
       historicalData[location] = locationData
       aggregateCB()
     })
   }, function () {
-    console.log('done mapping')
-    return callback(null, historicalData)
+    callback(null, historicalData)
   })
 }
 
