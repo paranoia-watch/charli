@@ -93,6 +93,83 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
 
 }
 
+function getHistoricalData(locations, startDay, endDay, callback) {
+  var historicalData = {};
+  async.mapSeries(locations, function (location, aggregateCB) {
+   getLocationAveragesPerDay(location, startDay, endDay, function(err, data) {
+    var locationData = parseLocationAggregrationResultToLocationData(data)
+    historicalData[location] = locationData;
+    aggregateCB()
+   })
+  }, function () {
+    console.log("done mapping")
+    return callback(null, historicalData)
+  }) 
+}
+
+function parseLocationAggregrationResultToLocationData(locationAggregrationResult) {
+  return locationAggregrationResult.map(function(locationAggregrationRecord) {
+    return {
+      date: locationAggregrationRecord._id.date,
+      average: locationAggregrationRecord.average
+    }
+  })
+}
+
+function getLocationAveragesPerDay(location, startDay, endDay, callback) {
+  var query = [
+    {
+      "$match": {
+        "locationAverageAfterInsert": {
+          "$exists": 1
+        },
+        "publisherLocation": location,
+        "date": {
+          "$lte": new Date(endDay),
+          "$gte": new Date(startDay)
+        }
+      }
+    },
+    {
+      "$project": {
+        "locationAverageAfterInsert": "$locationAverageAfterInsert",
+        "yearMonthDay": {
+          "$dateToString": {
+            "format": "%Y-%m-%d",
+            "date": "$date"
+          }
+        }
+      }
+    },
+    {
+      "$group": {
+        "_id": {
+          "date": "$yearMonthDay"
+        },
+        "average": {
+          "$avg": "$locationAverageAfterInsert"
+        }
+      }
+    },
+    {
+      "$sort": {
+        "date": 1
+      }
+    }
+  ]
+
+  PublicationModel.aggregate(query, function (error, result) {
+    if (error) {
+      return callback(error)
+    }
+    callback(null, result)
+    // if (!result[0] || !result[0].weight) {
+    //   return callback(null, 0)
+    // }
+    // callback(null, result[0].weight)
+  })
+}
+
 function getCumulativePublicationsWeightByLocation (location, startDate, endDate, callback) {
   PublicationModel.aggregate([{
     $match: {
@@ -130,3 +207,4 @@ exports.connect = connect
 exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
 exports.getTimeframeToTimeframeGrowth = getTimeframeToTimeframeGrowth
+exports.getHistoricalData = getHistoricalData
