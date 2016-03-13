@@ -68,7 +68,8 @@ API.on('paranoia-update-error', function (error) {
 })
 
 API.on('historical-data-updated', function (historicalData) {
-  console.info('broadcasting historical data', JSON.stringify(historicalData))
+  var clientReadableHistoricalData = parseHistoricalDataToClientReadableObject(historicalData)
+  console.info('broadcasting historical data', JSON.stringify(clientReadableHistoricalData))
   HISTORICAL_DATA = historicalData
   broadcaster.broadcast('historical-data', HISTORICAL_DATA)
 })
@@ -82,7 +83,16 @@ function getGrowthNumbers () {
 }
 
 function getHistoricalData() {
-  API.getHistoricalData(['Amsterdam', 'Paris', 'Berlin'], 1, "2016-02-10")  
+  API.getHistoricalData(['Amsterdam', 'Paris', 'Berlin'], 1, "2016-02-10")
+}
+
+function parseHistoricalDataToClientReadableObject (historicalData) {
+  return {
+    historicalData: [{
+      interval: 86400000,
+      locations: historicalData
+    }]
+  }
 }
 
 function parseGrowthNumbersToClientReadibleObject (growthNumbers) {
