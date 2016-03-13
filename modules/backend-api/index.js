@@ -44,23 +44,23 @@ function BackendAPI (backend, dbsettings) {
     })
   }
 
-  api.updateGrowthNumbers = function(locations, startDate, timeframeSpan) {
-    backend.getTimeframeToTimeframeGrowth(locations, startDate, timeframeSpan, function(error, growthNumbers) {
-      if(error) {
+  api.updateGrowthNumbers = function (locations, startDate, timeframeSpan) {
+    backend.getTimeframeToTimeframeGrowth(locations, startDate, timeframeSpan, function (error, growthNumbers) {
+      if (error) {
         return api.emit('paranoia-update-error', error)
       }
       api.emit('paranoia-updated', growthNumbers)
     })
   }
 
-  api.getHistoricalData = function(locations, months, endDayString) {
-    var endDay = (endDayString) ? moment(endDayString).format("YYYY-MM-DD") : moment().format("YYYY-MM-DD")
-    var startDay = moment(endDay).subtract(months, "months").format("YYYY-MM-DD")
-    backend.getHistoricalData(locations, startDay, endDay, function(error, historicalData) {
-      if(error) {
+  api.getHistoricalData = function (locations, months, endDayString) {
+    var endDay = (endDayString) ? moment(endDayString).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD')
+    var startDay = moment(endDay).subtract(months, 'months').format('YYYY-MM-DD')
+    backend.getHistoricalData(locations, startDay, endDay, function (error, historicalData) {
+      if (error) {
         return api.emit('historical-data-update-error', error)
       }
-      api.emit('historical-data-updated', historicalData)      
+      api.emit('historical-data-updated', historicalData)
     })
   }
 

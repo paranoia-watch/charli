@@ -15,7 +15,7 @@ var PublicationModel = schemas.createPublicationModel()
 
 function connect (dbsettings, callback) {
   mongoose.connect(dbsettings.uri, { server: { connectTimeoutMS: 3600000 } }, function (error, data) {
-    mongoose.connection.on('disconnected', function() {
+    mongoose.connection.on('disconnected', function () {
       connect(dbsettings, callback)
     })
     if (error) return callback(error)
@@ -45,17 +45,17 @@ function savePublication (publication, callback) {
   model.save(callback)
 }
 
-function getTimeframeToTimeframeGrowth(locations, date, timeframeSpan, callback) {
+function getTimeframeToTimeframeGrowth (locations, date, timeframeSpan, callback) {
   var numberOfLocations = locations.length
   var growthNumbers = {}
-  
-  locations.map(function(location) {
-    getTimeframeToTimeframeGrowthByLocation(location, date, timeframeSpan, function(error, growth) {
-      if(error) {
+
+  locations.map(function (location) {
+    getTimeframeToTimeframeGrowthByLocation(location, date, timeframeSpan, function (error, growth) {
+      if (error) {
         return callback(error)
       }
       growthNumbers[location] = growth
-      if(Object.keys(growthNumbers).length == numberOfLocations) {
+      if (Object.keys(growthNumbers).length == numberOfLocations) {
         return callback(null, growthNumbers)
       }
     })
@@ -93,22 +93,22 @@ function getTimeframeToTimeframeGrowthByLocation (location, date, timeframeSpan,
 
 }
 
-function getHistoricalData(locations, startDay, endDay, callback) {
-  var historicalData = {};
+function getHistoricalData (locations, startDay, endDay, callback) {
+  var historicalData = {}
   async.mapSeries(locations, function (location, aggregateCB) {
-   getLocationAveragesPerDay(location, startDay, endDay, function(err, data) {
-    var locationData = parseLocationAggregrationResultToLocationData(data)
-    historicalData[location] = locationData;
-    aggregateCB()
-   })
+    getLocationAveragesPerDay(location, startDay, endDay, function (err, data) {
+      var locationData = parseLocationAggregrationResultToLocationData(data)
+      historicalData[location] = locationData
+      aggregateCB()
+    })
   }, function () {
-    console.log("done mapping")
+    console.log('done mapping')
     return callback(null, historicalData)
-  }) 
+  })
 }
 
-function parseLocationAggregrationResultToLocationData(locationAggregrationResult) {
-  return locationAggregrationResult.map(function(locationAggregrationRecord) {
+function parseLocationAggregrationResultToLocationData (locationAggregrationResult) {
+  return locationAggregrationResult.map(function (locationAggregrationRecord) {
     return {
       date: locationAggregrationRecord._id.date,
       average: locationAggregrationRecord.average
@@ -116,44 +116,44 @@ function parseLocationAggregrationResultToLocationData(locationAggregrationResul
   })
 }
 
-function getLocationAveragesPerDay(location, startDay, endDay, callback) {
+function getLocationAveragesPerDay (location, startDay, endDay, callback) {
   var query = [
     {
-      "$match": {
-        "locationAverageAfterInsert": {
-          "$exists": 1
+      '$match': {
+        'locationAverageAfterInsert': {
+          '$exists': 1
         },
-        "publisherLocation": location,
-        "date": {
-          "$lte": new Date(endDay),
-          "$gte": new Date(startDay)
+        'publisherLocation': location,
+        'date': {
+          '$lte': new Date(endDay),
+          '$gte': new Date(startDay)
         }
       }
     },
     {
-      "$project": {
-        "locationAverageAfterInsert": "$locationAverageAfterInsert",
-        "yearMonthDay": {
-          "$dateToString": {
-            "format": "%Y-%m-%d",
-            "date": "$date"
+      '$project': {
+        'locationAverageAfterInsert': '$locationAverageAfterInsert',
+        'yearMonthDay': {
+          '$dateToString': {
+            'format': '%Y-%m-%d',
+            'date': '$date'
           }
         }
       }
     },
     {
-      "$group": {
-        "_id": {
-          "date": "$yearMonthDay"
+      '$group': {
+        '_id': {
+          'date': '$yearMonthDay'
         },
-        "average": {
-          "$avg": "$locationAverageAfterInsert"
+        'average': {
+          '$avg': '$locationAverageAfterInsert'
         }
       }
     },
     {
-      "$sort": {
-        "date": 1
+      '$sort': {
+        'date': 1
       }
     }
   ]
@@ -193,11 +193,11 @@ function getCumulativePublicationsWeightByLocation (location, startDate, endDate
   })
 }
 
-process.on('SIGTERM', function() {
-  mongoose.connection.close(function() {
-      process.exit(0);
-  });
-});
+process.on('SIGTERM', function () {
+  mongoose.connection.close(function () {
+    process.exit(0)
+  })
+})
 
 exports.connect = connect
 exports.savePublication = savePublication
