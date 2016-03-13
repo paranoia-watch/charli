@@ -163,10 +163,6 @@ function getLocationAveragesPerDay(location, startDay, endDay, callback) {
       return callback(error)
     }
     callback(null, result)
-    // if (!result[0] || !result[0].weight) {
-    //   return callback(null, 0)
-    // }
-    // callback(null, result[0].weight)
   })
 }
 
