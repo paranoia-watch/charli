@@ -10,6 +10,7 @@ var API = new require('./modules/backend-api/index.js')('mongo', settings.db)
 var broadcaster = new require('./modules/broadcaster.js')(settings.server)
 
 var CACHE = {}
+var HISTORICAL_DATA = {}
 
 broadcaster.on('listening', function (port) {
   console.info('Broadcaster is listening on port', port)
@@ -18,12 +19,14 @@ broadcaster.on('listening', function (port) {
 broadcaster.on('client-connected', function (socket) {
   console.info('Broadcaster was connected to by some client')
   socket.emit('paranoia-updated', CACHE)
+  socket.emit('historical-data', HISTORICAL_DATA)
 })
 
 API.on('backend-connected', function () {
   var trackingTerms = settings.getTrackingTermsAsFlatArray()
   console.info('API backend connected, you can now read from and write to it :)')
   getGrowthNumbers()
+  getHistoricalData()
   API.collectPublications(settings, trackingTerms)
 })
 
@@ -64,8 +67,22 @@ API.on('paranoia-update-error', function (error) {
   console.error('API failed to update paranoia\nbackend says: ' + error + '\n')
 })
 
+API.on('historical-data-updated', function (historicalData) {
+  console.info('broadcasting historical data', JSON.stringify(historicalData))
+  HISTORICAL_DATA = historicalData
+  broadcaster.broadcast('historical-data', HISTORICAL_DATA)
+})
+
+API.on('historical-data-update-error', function (error) {
+  console.error('API failed to update historical data\nbackend says: ' + error + '\n')
+})
+
 function getGrowthNumbers () {
   API.updateGrowthNumbers(['Amsterdam', 'Paris', 'Berlin'], new Date(), getCurrentTimeframeSpan())
+}
+
+function getHistoricalData() {
+  API.getHistoricalData(['Amsterdam', 'Paris', 'Berlin'], 1, "2016-02-10")  
 }
 
 function parseGrowthNumbersToClientReadibleObject (growthNumbers) {
