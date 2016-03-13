@@ -193,8 +193,8 @@ function getCumulativePublicationsWeightByLocation (location, startDate, endDate
   })
 }
 
-process.on('SIGINT', function() {
-  mongoose.connection.close(function () {
+process.on('SIGTERM', function() {
+  mongoose.connection.close(function() {
       process.exit(0);
   });
 });
