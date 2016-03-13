@@ -23,7 +23,7 @@ function BackendAPI (backend, dbsettings) {
 
   backend.connect(dbsettings, function (error) {
     if (error) {
-      return api.emit('backend-connection-error', err, res)
+      return api.emit('backend-connection-error', error)
     }
     api.emit('backend-connected')
   })
