@@ -70,7 +70,7 @@ API.on('paranoia-update-error', function (error) {
 API.on('historical-data-updated', function (historicalData) {
   var clientReadableHistoricalData = parseHistoricalDataToClientReadableObject(historicalData)
   console.info('broadcasting historical data', JSON.stringify(clientReadableHistoricalData))
-  HISTORICAL_DATA = historicalData
+  HISTORICAL_DATA = clientReadableHistoricalData
   broadcaster.broadcast('historical-data', HISTORICAL_DATA)
 })
 
