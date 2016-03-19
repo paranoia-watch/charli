@@ -138,7 +138,7 @@ function getCurrentCollectionAverage(dateOfNewRecord, publicationWeight, callbac
         .limit(1)
         .exec(function(error, results) {
             if(error) return callback(error)
-            if(!results || !results[0]) return callback("no records found")
+            if(!results || !results[0]) return callback(null, publicationWeight)
             callback(null, results[0].collectionAverageAfterInsert || publicationWeight)
         })
 }
@@ -157,7 +157,7 @@ function getCurrentLocationAverage(dateOfNewRecord, publicationWeight, locationN
         .limit(1)
         .exec(function(error, results) {
             if(error) return callback(error)
-            if(!results || !results[0]) return callback("no records found")
+            if(!results || !results[0]) return callback(null, publicationWeight)
             callback(null, results[0].locationAverageAfterInsert || publicationWeight)
         })
 }
