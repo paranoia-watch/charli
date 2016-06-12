@@ -26,6 +26,7 @@ settings.twitter = {
   disabled: process.env.TWITTERDISABLED || false
 }
 
+// Tracking terms
 settings.trackingTerms = process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json')
 settings.getTrackingTermsAsFlatArray = function () {
   var array = []
