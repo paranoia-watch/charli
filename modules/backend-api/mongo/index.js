@@ -14,7 +14,7 @@ var PeilingwijzerModel = schemas.createPeilingwijzerModel()
 var PublicationModel = schemas.createPublicationModel()
 
 function connect (dbsettings, callback) {
-  mongoose.connect(dbsettings.uri, { server: { connectTimeoutMS: 3600000 } }, function (error, data) {
+  mongoose.connect(dbsettings.uri, { server: { connectTimeoutMS: 3600000, poolSize: 25 } }, function (error, data) {
     mongoose.connection.on('disconnected', function () {
       connect(dbsettings, callback)
     })
