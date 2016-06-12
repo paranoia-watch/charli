@@ -30,19 +30,8 @@ function getPublicationSchema () {
 
 function getPeilingwijzerSchema () {
   return new mongoose.Schema({
-    VVD: Number,
-    PvdA: Number,
-    PVV: Number,
-    SP: Number,
-    CDA: Number,
-    D66: Number,
-    CU: Number,
-    GL: Number,
-    SGP: Number,
-    PvdD: Number,
-    '50PLUS': Number,
-    VNL: Number,
-    date: Date
+    date: Date,
+    seats: mongoose.Schema.Types.Mixed
   })
 }
 
