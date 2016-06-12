@@ -36,4 +36,4 @@ Create a file called `twitter-login-token.js` with the following content and you
 
 Set environment variable MONGOLAB_URI!
 
-`npm install` and then `node server.js`
+`npm install` and then `node index.js`
