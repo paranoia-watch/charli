@@ -11,6 +11,7 @@ var broadcaster = new require('./modules/broadcaster.js')(settings.server)
 
 var CACHE = {}
 var HISTORICAL_DATA = {}
+var PEILINGWIJZER_DATA = []
 
 broadcaster.on('listening', function (port) {
   console.info('Broadcaster is listening on port', port)
@@ -20,6 +21,7 @@ broadcaster.on('client-connected', function (socket) {
   console.info('Broadcaster was connected to by some client')
   socket.emit('paranoia-updated', CACHE)
   socket.emit('historical-data', HISTORICAL_DATA)
+  socket.emit('peilingwijzer-data', PEILINGWIJZER_DATA)
 })
 
 API.on('backend-connected', function () {
@@ -81,7 +83,8 @@ API.on('historical-data-update-error', function (error) {
 
 API.on('peilingwijzer-data-updated', function (peilingwijzerData) {
   console.info('broadcasting peilingwijzer data', JSON.stringify(peilingwijzerData))
-  broadcaster.broadcast('peilingwijzer-data', peilingwijzerData)
+  PEILINGWIJZER_DATA = peilingwijzerData
+  broadcaster.broadcast('peilingwijzer-data', PEILINGWIJZER_DATA)
   setTimeout(API.processPeilingwijzerData, settings.peilingwijzer.processInterval)
 })
 
