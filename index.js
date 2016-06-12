@@ -6,11 +6,12 @@
  */
 
 var settings = require('./settings.js')
-var API = new require('./modules/backend-api/index.js')('mongo', settings.db)
+var API = new require('./modules/backend-api/index.js')(settings.backend, settings.db)
 var broadcaster = new require('./modules/broadcaster.js')(settings.server)
 
 var CACHE = {}
 var HISTORICAL_DATA = {}
+var PEILINGWIJZER_DATA = []
 
 broadcaster.on('listening', function (port) {
   console.info('Broadcaster is listening on port', port)
@@ -20,6 +21,7 @@ broadcaster.on('client-connected', function (socket) {
   console.info('Broadcaster was connected to by some client')
   socket.emit('paranoia-updated', CACHE)
   socket.emit('historical-data', HISTORICAL_DATA)
+  socket.emit('peilingwijzer-data', PEILINGWIJZER_DATA)
 })
 
 API.on('backend-connected', function () {
@@ -27,6 +29,7 @@ API.on('backend-connected', function () {
   console.info('API backend connected, you can now read from and write to it :)')
   getGrowthNumbers()
   getHistoricalData()
+  API.processPeilingwijzerData()
   API.collectPublications(settings, trackingTerms)
 })
 
@@ -76,6 +79,18 @@ API.on('historical-data-updated', function (historicalData) {
 
 API.on('historical-data-update-error', function (error) {
   console.error('API failed to update historical data\nbackend says: ' + error + '\n')
+})
+
+API.on('peilingwijzer-data-updated', function (peilingwijzerData) {
+  console.info('broadcasting peilingwijzer data', JSON.stringify(peilingwijzerData))
+  PEILINGWIJZER_DATA = peilingwijzerData
+  broadcaster.broadcast('peilingwijzer-data', PEILINGWIJZER_DATA)
+  setTimeout(API.processPeilingwijzerData, settings.peilingwijzer.processInterval)
+})
+
+API.on('peilingwijzer-data-update-error', function (error) {
+  console.error('API failed to update peilingwijzer data\nbackend says: ' + error + '\n')
+  setTimeout(API.processPeilingwijzerData, settings.peilingwijzer.processInterval)
 })
 
 function getGrowthNumbers () {

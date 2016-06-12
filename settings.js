@@ -26,6 +26,7 @@ settings.twitter = {
   disabled: process.env.TWITTERDISABLED || false
 }
 
+// Tracking terms
 settings.trackingTerms = process.env.TWITTERTRACKTERMSJSON || require('./track-twitter-terms.json')
 settings.getTrackingTermsAsFlatArray = function () {
   var array = []
@@ -35,6 +36,11 @@ settings.getTrackingTermsAsFlatArray = function () {
     array = array.concat(cityTerms)
     return array
   })
+}
+
+//Peilingwijzer
+settings.peilingwijzer = {
+  processInterval: process.env.PEILINGWIJZER_PROCESS_INTERVAL || 3600000
 }
 
 // Index

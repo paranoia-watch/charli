@@ -16,7 +16,9 @@ function main (fileData) {
 
 function parseFieldNamesFromFileData (fileData) {
   var headerRowData = fileData.split(/\n/g)[0]
-  headerRowFields = headerRowData.split(',').slice(this.length, -1)
+  headerRowFields = headerRowData.split(',').slice(this.length).map(function(headerRowFieldName) {
+    return headerRowFieldName.replace(/\r/g, "")
+  })
   return headerRowFields
 }
 
@@ -70,7 +72,7 @@ function calculateAverageByCellValueAndNumberOfComponents (cellValue, numberOfCo
 }
 
 function getCellValuesByRowData (rowData) {
-  return rowData.split(',').slice(this.length, -1)
+  return rowData.split(',').slice(this.length)
 }
 
 module.exports = main
