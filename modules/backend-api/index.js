@@ -29,7 +29,14 @@ function BackendAPI (backend, dbsettings) {
     api.emit('backend-connected')
   })
 
-  api.processPeilingwijzerData = function (callback) { return backend.processPeilingwijzerData(callback) }
+  api.processPeilingwijzerData = function () {
+    return backend.processPeilingwijzerData(function(error, peilingwijzerData) {
+      if (error) {
+        return api.emit('peilingwijzer-data-update-error', error)
+      }
+      api.emit('peilingwijzer-data-updated', peilingwijzerData)
+    })
+  }
 
   api.collectPublications = function (settings, trackingTerms) {
     return collectPublications(api, settings, trackingTerms)

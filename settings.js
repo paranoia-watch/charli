@@ -37,6 +37,11 @@ settings.getTrackingTermsAsFlatArray = function () {
   })
 }
 
+//Peilingwijzer
+settings.peilingwijzer = {
+  processInterval: 86400000
+}
+
 // Index
 settings.createIndex = {
   disabled: process.env.INDEXDISABLED || false,

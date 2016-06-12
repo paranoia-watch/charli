@@ -32,11 +32,9 @@ function processPeilingwijzerData (callback) {
 function savePeilingwijzerData (data, callback) {
   async.mapSeries(data, function (item, savecb) {
     var model = new PeilingwijzerModel(item)
-    model.save(function (err) {
-      return savecb()
-    })
+    model.save(savecb)
   }, function () {
-    return callback(data)
+    return callback(null, data)
   })
 }
 
