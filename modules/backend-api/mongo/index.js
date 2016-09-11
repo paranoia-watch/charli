@@ -123,7 +123,7 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
         "publisherLocation": location,
         "date" : {
           "$lte": new Date(endDay),
-          "$gte": new Date(stateDay),
+          "$gte": new Date(startDay),
          }
       }
     },
