@@ -119,38 +119,36 @@ function parseLocationAggregrationResultToLocationData (locationAggregrationResu
 function getLocationAveragesPerDay (location, startDay, endDay, callback) {
   var query = [
     {
-      '$match': {
-        'publisherLocation': location,
-        'date': {
-          '$lte': new Date(endDay),
-          '$gte': new Date(startDay)
-        }
+      "$match": {
+        "publisherLocation": location,
+        "date" : {
+          "$lte": new Date(endDay),
+          "$gte": new Date(stateDay),
+         }
       }
     },
     {
-      '$project': {
-        'weight': '$weight',
-        'yearMonthDay': {
-          '$dateToString': {
-            'format': '%Y-%m-%d',
-            'date': '$date'
+      "$project": {
+        "weight": "$weight",
+        "yearMonthDay": {
+          "$dateToString": {
+            "format": "%Y-%m-%d",
+            "date": "$date"
           }
         }
       }
     },
     {
-      '$group': {
-        '_id': {
-          'date': '$yearMonthDay'
-        },
-        'average': {
-          '$avg': '$weight'
+      "$group": {
+        "_id": "$yearMonthDay",
+        "average": {
+          "$avg": "$weight"
         }
       }
     },
     {
-      '$sort': {
-        'date': 1
+      "$sort": {
+        "_id": 1
       }
     }
   ]
