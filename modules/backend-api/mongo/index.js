@@ -120,9 +120,6 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
   var query = [
     {
       '$match': {
-        'locationAverageAfterInsert': {
-          '$exists': 1
-        },
         'publisherLocation': location,
         'date': {
           '$lte': new Date(endDay),
@@ -132,7 +129,7 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
     },
     {
       '$project': {
-        'locationAverageAfterInsert': '$locationAverageAfterInsert',
+        'weight': '$weight',
         'yearMonthDay': {
           '$dateToString': {
             'format': '%Y-%m-%d',
@@ -147,7 +144,7 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
           'date': '$yearMonthDay'
         },
         'average': {
-          '$avg': '$locationAverageAfterInsert'
+          '$avg': '$weight'
         }
       }
     },
