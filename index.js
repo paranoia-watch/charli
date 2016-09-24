@@ -98,7 +98,7 @@ function getGrowthNumbers () {
 }
 
 function getHistoricalData() {
-  API.getHistoricalData(['Amsterdam', 'Paris', 'Berlin'], 1, "2016-09-11")
+  API.getHistoricalData(['Amsterdam', 'Paris', 'Berlin'], 12, "2017-01-01")
 }
 
 function parseHistoricalDataToClientReadableObject (historicalData) {

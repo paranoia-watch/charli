@@ -110,7 +110,7 @@ function getHistoricalData (locations, startDay, endDay, callback) {
 function parseLocationAggregrationResultToLocationData (locationAggregrationResult) {
   return locationAggregrationResult.map(function (locationAggregrationRecord) {
     return {
-      date: locationAggregrationRecord._id.date,
+      date: locationAggregrationRecord._id,
       average: locationAggregrationRecord.average
     }
   })
@@ -122,8 +122,8 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
       "$match": {
         "publisherLocation": location,
         "date" : {
-          "$lte": new Date(endDay).toISOString(),
-          "$gte": new Date(startDay).toISOString(),
+          "$gte": new Date(startDay),
+          "$lte": new Date(endDay),
          }
       }
     },
@@ -154,7 +154,6 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
   ]
 
   PublicationModel.aggregate(query, function (error, result) {
-    console.log("aggregate", error, result)
     if (error) {
       return callback(error)
     }
