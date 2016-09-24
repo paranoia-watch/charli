@@ -122,8 +122,8 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
       "$match": {
         "publisherLocation": location,
         "date" : {
-          "$lte": new Date(endDay),
-          "$gte": new Date(startDay),
+          "$lte": new Date(endDay).toISOString(),
+          "$gte": new Date(startDay).toISOString(),
          }
       }
     },
@@ -154,6 +154,7 @@ function getLocationAveragesPerDay (location, startDay, endDay, callback) {
   ]
 
   PublicationModel.aggregate(query, function (error, result) {
+    console.log("aggregate", error, result)
     if (error) {
       return callback(error)
     }
