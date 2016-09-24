@@ -27,17 +27,22 @@ var Broadcaster = function (settings) {
   var listenToSockets = function () {
     socketServer.sockets.on('connection', function (socket) {
       broadcaster.emit('client-connected', socket)
-    })
-    internalAffairs.on('broadcast', function (affair) {
-      socket.broadcast.emit(affair.eventName, affair.payload)
+      // internalAffairs.on('broadcast', function (affair) {
+      //   socket.emit(affair.eventName, affair.payload)
+      // })
+      // socket.on('end', function (){
+      //   broadcaster.emit('client-disconnected', socket)
+      //     socket.disconnect(0);
+      // });
     })
   }
 
   broadcaster.broadcast = function (eventName, payload) {
-    internalAffairs.emit('broadcast', {
-      eventName: eventName,
-      payload: payload
-    })
+    socketServer.sockets.emit(eventName, payload);
+    // internalAffairs.emit('broadcast', {
+    //   eventName: eventName,
+    //   payload: payload
+    // })
   }
 
   // Start a broadcaster
