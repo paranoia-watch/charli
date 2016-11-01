@@ -12,6 +12,7 @@ var schemas = require('./schema')
 var peilingwijzer = require('../../peilingwijzer/index')
 var PeilingwijzerModel = schemas.createPeilingwijzerModel()
 var PublicationModel = schemas.createPublicationModel()
+var moment = require('moment');
 
 function connect (dbsettings, callback) {
   mongoose.connect(dbsettings.uri, { server: { connectTimeoutMS: 3600000, poolSize: 25 } }, function (error, data) {
@@ -41,6 +42,95 @@ function savePeilingwijzerData (data, callback) {
 function savePublication (publication, callback) {
   var model = new PublicationModel(publication)
   model.save(callback)
+}
+
+function getDifferenceBetweenLastMinuteAndHistoricalMinuteAverage(location, callback) {
+
+  var firstPublication = moment('2016-10-12T10:20:37Z');
+  var now = moment.utc().startOf('minute');
+  var lastDay = moment(now.format()).subtract(1, 'days');
+
+  var lastMinute = moment(now.format()).subtract(1, 'minutes');
+  var hours = lastMinute.format('hh');
+  var minutes = lastMinute.format('mm');
+
+  async.parallel([
+    
+    //last minute
+    function (taskCallback) {
+      getLocationWeightAverageByLocationWithinTimeFrame(location, lastDay.format(), now.format(), hours, minutes, taskCallback) 
+    },
+
+    //historical, first until yesterday
+    function (taskCallback) {
+      getLocationWeightAverageByLocationWithinTimeFrame(location, firstPublication.format(), lastDay.format(), hours, minutes, taskCallback) 
+    }
+
+  ], function(err, result) {
+    if(err) return callback(err);
+
+    var todayAverage = (result[0] && result[0].average) ? result[0].average : 0;
+    var historicalAverage = (result[1] && result[1].average) ? result[1].average : 0;
+
+    var currentLocationDifferencePercentage = (todayAverage / historicalAverage) * 100;
+    return callback(null, currentLocationDifferencePercentage);
+
+  });
+
+}
+
+function getLocationWeightAverageByLocationWithinTimeFrame(location, startTime, endTime, hours, minutes, callback) {
+
+  var startDay = moment(startTime);
+  var endDay = moment(endTime);
+  var daysBetween = endDay.diff(startDay, "days");
+
+  var query = [
+    {
+      "$match": {
+        "publisherLocation": location,
+        "date":{
+          "$gte": new Date(startTime),
+          "$lte": new Date(endTime)
+        }
+      }
+    },
+    {
+      "$project": {
+        "weight": "$weight",
+        "hour": { "$hour": "$date" },
+        "minutes": { "$minute": "$date" }
+      }
+    },
+    {
+      "$match": {
+        "hour": hours,
+        "minutes": minutes
+      }
+    },
+    {
+      "$group": {
+        "_id": "total",
+        "total": {
+          "$sum": "$weight" 
+        }
+      }
+    },
+    {
+      "$project": {
+        "total": "$total",
+        "average": { "$divide": ["$total", daysBetween] }
+      }
+    }
+  ]
+
+  PublicationModel.aggregate(query, function (error, result) {
+    if (error) {
+      return callback(error)
+    }
+
+    callback(null, result[0] || {})
+  })
 }
 
 function getTimeframeToTimeframeGrowth (locations, date, timeframeSpan, callback) {
@@ -199,3 +289,4 @@ exports.savePublication = savePublication
 exports.processPeilingwijzerData = processPeilingwijzerData
 exports.getTimeframeToTimeframeGrowth = getTimeframeToTimeframeGrowth
 exports.getHistoricalData = getHistoricalData
+exports.getDifferenceBetweenLastMinuteAndHistoricalMinuteAverage = getDifferenceBetweenLastMinuteAndHistoricalMinuteAverage;

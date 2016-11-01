@@ -71,6 +71,15 @@ function BackendAPI (backend, dbsettings) {
     })
   }
 
+  api.getDifferenceBetweenLastMinuteAndHistoricalMinuteAverage = function(location) {
+    backend.getDifferenceBetweenLastMinuteAndHistoricalMinuteAverage(location, function(error, locationDifferencePercentage) {
+      if (error) {
+        return api.emit('minute-difference-error', error)
+      }
+      api.emit('minute-difference', locationDifferencePercentage)      
+    })
+  }
+
   return api
 }
 

@@ -31,6 +31,7 @@ API.on('backend-connected', function () {
   getHistoricalData()
   API.processPeilingwijzerData()
   API.collectPublications(settings, trackingTerms)
+  // API.getDifferenceBetweenLastMinuteAndHistoricalMinuteAverage('Amsterdam');
 })
 
 API.on('backend-connection-error', function (error) {
@@ -91,6 +92,14 @@ API.on('peilingwijzer-data-updated', function (peilingwijzerData) {
 API.on('peilingwijzer-data-update-error', function (error) {
   console.error('API failed to update peilingwijzer data\nbackend says: ' + error + '\n')
   setTimeout(API.processPeilingwijzerData, settings.peilingwijzer.processInterval)
+})
+
+API.on('minute-difference', function(data) {
+  console.info('minute-difference', data);
+})
+
+API.on('minute-difference-error', function(error) {
+  console.error('minute-difference-error', error);
 })
 
 function getGrowthNumbers () {
